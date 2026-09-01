@@ -53,24 +53,9 @@
         .link-number { color: #8b949e; font-size: 0.7rem; margin-top: 2px; }
 
         .actions { display: flex; align-items: center; gap: 6px; margin-left: 8px; }
-        .btn-action { background: #21262d; border: 1px solid #30363d; color: #58a6ff; padding: 6px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
-        .btn-action:active { background: #30363d; }
+        .btn-action { background: #21262d; border: 1px solid #30363d; color: #58a6ff; padding: 6px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; cursor: pointer; pointer-events: none; }
         .favorite-button { background: transparent; border: none; color: #484f58; font-size: 1.2rem; padding: 2px 4px; cursor: pointer; }
         .favorite-button.active { color: #e3b341; }
-
-        /* In-App Browser Modal */
-        .browser-modal { position: fixed; inset: 0; background: #0d1117; z-index: 100; display: none; flex-direction: column; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1); }
-        .browser-modal.open { transform: translateY(0); display: flex; }
-
-        .browser-header { background: #161b22; border-bottom: 1px solid #30363d; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-        .browser-url { color: #8b949e; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; background: #0d1117; padding: 6px 12px; border-radius: 8px; border: 1px solid #30363d; }
-        .browser-actions { display: flex; gap: 8px; }
-
-        .browser-body { flex: 1; position: relative; background: #fff; }
-        .browser-body iframe { width: 100%; height: 100%; border: none; }
-
-        .iframe-fallback { position: absolute; inset: 0; background: #0d1117; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; gap: 14px; z-index: 2; }
-        .iframe-fallback p { color: #8b949e; font-size: 0.9rem; max-width: 300px; }
 
         .overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); display: none; z-index: 10; }
         .overlay.open { display: block; }
@@ -102,24 +87,6 @@
     </section>
 
     <main class="links" id="links"></main>
-
-    <!-- In-App Preview Modal with Share Sheet Integration -->
-    <div class="browser-modal" id="browserModal">
-        <div class="browser-header">
-            <div class="browser-url" id="browserUrlText">https://...</div>
-            <div class="browser-actions">
-                <button class="btn-pill" onclick="shareCurrentLink()">📤 Share</button>
-                <button class="btn-pill" style="color: #f85149;" onclick="closeInAppBrowser()">✕ Close</button>
-            </div>
-        </div>
-        <div class="browser-body">
-            <div class="iframe-fallback" id="iframeFallback" style="display: none;">
-                <p>This website restricts inline preview windows for security reasons.</p>
-                <button class="random-button" style="padding: 10px 20px; font-size: 0.95rem;" onclick="shareCurrentLink()">Share or Open Link</button>
-            </div>
-            <iframe id="browserFrame" src="" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
-        </div>
-    </div>
 
     <div class="overlay" id="overlay" onclick="toggleHistory()"></div>
     <section class="history-drawer" id="historyDrawer">
@@ -206,7 +173,6 @@
         const ALL_LINKS = CATEGORIES.flatMap(cat => cat.links);
         const STORAGE_PREFIX = "linkhub_";
         let shuffledLinks = [], currentIndex = 0, favorites = [], history = [];
-        let currentActiveUrl = "";
 
         document.addEventListener("DOMContentLoaded", () => {
             try {
@@ -266,46 +232,11 @@
             saveShuffle();
         }
 
-        function openInAppViewer(url, event) {
+        function launchLink(url, event) {
             if (event) event.stopPropagation();
-            currentActiveUrl = url;
             addToHistory(url);
             updateUI();
-
-            document.getElementById("browserUrlText").textContent = url;
-            document.getElementById("iframeFallback").style.display = "none";
-
-            const frame = document.getElementById("browserFrame");
-            frame.src = url;
-
-            document.getElementById("browserModal").classList.add("open");
-        }
-
-        function closeInAppBrowser() {
-            document.getElementById("browserModal").classList.remove("open");
-            document.getElementById("browserFrame").src = "";
-        }
-
-        // Native iOS Share Sheet Integration
-        async function shareCurrentLink() {
-            if (!currentActiveUrl) return;
-
-            if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: 'Link Hub',
-                        url: currentActiveUrl
-                    });
-                } catch (err) {
-                    // Suppress error if user simply cancels the share modal
-                    if (err.name !== 'AbortError') {
-                        window.open(currentActiveUrl, "_blank");
-                    }
-                }
-            } else {
-                // Fallback for non-supporting browsers/desktop
-                window.open(currentActiveUrl, "_blank");
-            }
+            window.open(url, "_blank");
         }
 
         function openRandomLink() {
@@ -313,7 +244,7 @@
             if (currentIndex >= shuffledLinks.length) createShuffle();
             const url = shuffledLinks[currentIndex++];
             saveShuffle();
-            openInAppViewer(url);
+            launchLink(url);
         }
 
         function toggleFavorite(url, event) {
@@ -409,11 +340,11 @@
                     </div>
                 </div>
                 <div class="actions">
-                    <button class="btn-action" onclick="openInAppViewer('${url.replace(/'/g, "\\'")}', event)">Preview</button>
+                    <button class="btn-action">Open</button>
                     <button class="favorite-button ${isFav ? "active" : ""}" onclick="toggleFavorite('${url.replace(/'/g, "\\'")}', event)">★</button>
                 </div>
             `;
-            card.onclick = (e) => openInAppViewer(url, e);
+            card.onclick = (e) => launchLink(url, e);
             return card;
         }
 
@@ -433,10 +364,10 @@
                         </div>
                     </div>
                     <div class="actions">
-                        <button class="btn-action" onclick="openInAppViewer('${url.replace(/'/g, "\\'")}', event)">Preview</button>
+                        <button class="btn-action">Open</button>
                     </div>
                 `;
-                card.onclick = (e) => openInAppViewer(url, e);
+                card.onclick = (e) => launchLink(url, e);
                 container.appendChild(card);
             });
         }
