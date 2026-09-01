@@ -53,7 +53,7 @@
         .search-input { flex: 1; background: #0d1117; border: 1px solid #30363d; border-radius: 10px; padding: 10px 14px; color: #c9d1d9; font-size: 0.9rem; outline: none; }
         .search-input:focus { border-color: #58a6ff; }
         
-        .search-select { background: #0d1117; border: 1px solid #30363d; border-radius: 10px; padding: 0 10px; color: #58a6ff; font-size: 0.8rem; font-weight: 600; outline: none; cursor: pointer; max-width: 130px; }
+        .search-select { background: #0d1117; border: 1px solid #30363d; border-radius: 10px; padding: 0 10px; color: #58a6ff; font-size: 0.8rem; font-weight: 600; outline: none; cursor: pointer; max-width: 140px; }
         .btn-inject { background: #238636; color: white; border: none; border-radius: 10px; padding: 0 14px; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
         .btn-inject:active { transform: scale(0.96); }
 
@@ -110,13 +110,7 @@
         <input type="text" class="search-input" id="searchInput" placeholder="Filter links..." oninput="filterLinks(this.value)">
         <div class="search-row">
             <input type="text" class="search-input" id="injectInput" placeholder="Search term to inject..." onkeypress="handleInjectKey(event)">
-            <select class="search-select" id="injectTarget">
-                <option value="https://kurosearch.com/?q=">Kurosearch</option>
-                <option value="https://archiveofourown.org/works/search?work_search[query]=">AO3</option>
-                <option value="https://www.pixiv.net/en/tags/">Pixiv Tag</option>
-                <option value="https://twitter.com/search?q=">X / Twitter</option>
-                <option value="https://www.reddit.com/search/?q=">Reddit</option>
-            </select>
+            <select class="search-select" id="injectTarget"></select>
             <button class="btn-inject" onclick="injectSearch()">Go</button>
         </div>
     </div>
@@ -167,6 +161,7 @@
         document.addEventListener("DOMContentLoaded", () => {
             loadData();
             loadShuffle();
+            populateInjectDropdown();
             renderLinks();
             renderHistory();
             updateUI();
@@ -214,6 +209,17 @@
             }
             currentIndex = 0;
             saveShuffle();
+        }
+
+        function populateInjectDropdown() {
+            const select = document.getElementById("injectTarget");
+            select.innerHTML = "";
+            ALL_LINKS.forEach(url => {
+                const option = document.createElement("option");
+                option.value = url;
+                option.textContent = getCleanName(url);
+                select.appendChild(option);
+            });
         }
 
         function launchLink(url, event) {
@@ -292,8 +298,23 @@
             
             if (!query) return;
             
-            const baseUrl = select.value;
-            const finalUrl = baseUrl + encodeURIComponent(query);
+            let targetUrl = select.value;
+            
+            // Smart injection format check: if it doesn't look like a direct query endpoint, append standard search param or build smart URL based on known domains
+            let finalUrl = targetUrl;
+            if (targetUrl.includes("archiveofourown.org")) {
+                finalUrl = `https://archiveofourown.org/works/search?work_search[query]=${encodeURIComponent(query)}`;
+            } else if (targetUrl.includes("kurosearch.com")) {
+                finalUrl = `https://kurosearch.com/?q=${encodeURIComponent(query)}`;
+            } else if (targetUrl.includes("reddit.com")) {
+                finalUrl = `https://www.reddit.com/search/?q=${encodeURIComponent(query)}`;
+            } else if (targetUrl.includes("pixiv.net")) {
+                finalUrl = `https://www.pixiv.net/en/tags/${encodeURIComponent(query)}`;
+            } else {
+                // Fallback universal behavior: append search query or parameters if not already present
+                const separator = targetUrl.includes("?") ? "&" : "?";
+                finalUrl = `${targetUrl}${separator}q=${encodeURIComponent(query)}`;
+            }
             
             launchLink(finalUrl);
             input.value = "";
