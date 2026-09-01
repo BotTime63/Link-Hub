@@ -32,7 +32,6 @@
             display: flex; 
             flex-direction: column; 
             overflow: hidden; 
-            /* iPhone 11 safe area padding */
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
         }
@@ -49,9 +48,14 @@
         .random-button:active { transform: scale(0.97); }
         .progress { margin-top: 6px; text-align: center; color: #8b949e; font-size: 0.75rem; font-weight: 500; }
 
-        .search-section { background: #161b22; padding: 0 16px 12px 16px; border-bottom: 1px solid #30363d; }
-        .search-input { width: 100%; background: #0d1117; border: 1px solid #30363d; border-radius: 10px; padding: 10px 14px; color: #c9d1d9; font-size: 0.9rem; outline: none; }
+        .search-section { background: #161b22; padding: 10px 16px 12px 16px; border-bottom: 1px solid #30363d; display: flex; flex-direction: column; gap: 8px; }
+        .search-row { display: flex; gap: 8px; }
+        .search-input { flex: 1; background: #0d1117; border: 1px solid #30363d; border-radius: 10px; padding: 10px 14px; color: #c9d1d9; font-size: 0.9rem; outline: none; }
         .search-input:focus { border-color: #58a6ff; }
+        
+        .search-select { background: #0d1117; border: 1px solid #30363d; border-radius: 10px; padding: 0 10px; color: #58a6ff; font-size: 0.8rem; font-weight: 600; outline: none; cursor: pointer; max-width: 130px; }
+        .btn-inject { background: #238636; color: white; border: none; border-radius: 10px; padding: 0 14px; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+        .btn-inject:active { transform: scale(0.96); }
 
         .links { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; -webkit-overflow-scrolling: touch; }
 
@@ -104,6 +108,17 @@
 
     <div class="search-section">
         <input type="text" class="search-input" id="searchInput" placeholder="Filter links..." oninput="filterLinks(this.value)">
+        <div class="search-row">
+            <input type="text" class="search-input" id="injectInput" placeholder="Search term to inject..." onkeypress="handleInjectKey(event)">
+            <select class="search-select" id="injectTarget">
+                <option value="https://kurosearch.com/?q=">Kurosearch</option>
+                <option value="https://archiveofourown.org/works/search?work_search[query]=">AO3</option>
+                <option value="https://www.pixiv.net/en/tags/">Pixiv Tag</option>
+                <option value="https://twitter.com/search?q=">X / Twitter</option>
+                <option value="https://www.reddit.com/search/?q=">Reddit</option>
+            </select>
+            <button class="btn-inject" onclick="injectSearch()">Go</button>
+        </div>
     </div>
 
     <main class="links" id="links"></main>
@@ -223,7 +238,6 @@
         }
 
         function openSecondApp() {
-            // Opens this same PWA route in Safari to prompt adding a second discrete home-screen app instance
             window.open(window.location.href, "_blank");
         }
 
@@ -263,13 +277,32 @@
                     }
                 });
                 
-                // Hide category header completely if no items match inside it
                 if (visibleCount === 0 && term !== "") {
                     group.style.display = "none";
                 } else {
                     group.style.display = "flex";
                 }
             });
+        }
+
+        function injectSearch() {
+            const input = document.getElementById("injectInput");
+            const select = document.getElementById("injectTarget");
+            const query = input.value.trim();
+            
+            if (!query) return;
+            
+            const baseUrl = select.value;
+            const finalUrl = baseUrl + encodeURIComponent(query);
+            
+            launchLink(finalUrl);
+            input.value = "";
+        }
+
+        function handleInjectKey(event) {
+            if (event.key === "Enter") {
+                injectSearch();
+            }
         }
 
         function getSiteIcon(url) {
