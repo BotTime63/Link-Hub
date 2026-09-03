@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 
-    <title>Link Hub</title>
+    <title>Link Hub (Thumb Optimized)</title>
 
     <!-- iPhone / PWA Config -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -44,9 +44,10 @@
             padding-bottom: env(safe-area-inset-bottom);
         }
 
+        /* Minimal clean top header now just for title and link count */
         header {
             background: #161b22;
-            padding: 10px 14px;
+            padding: 8px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -56,129 +57,20 @@
 
         header h1 {
             color: #f0f6fc;
-            font-size: 1.05rem;
+            font-size: 0.95rem;
             font-weight: 700;
-            letter-spacing: -0.01em;
-        }
-
-        .header-right {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
-
-        .btn-pill {
-            background: #21262d;
-            border: 1px solid #30363d;
-            border-radius: 16px;
-            padding: 6px 10px;
-            font-size: 0.72rem;
-            font-weight: 600;
-            color: #58a6ff;
-            cursor: pointer;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 3px;
-        }
-
-        .btn-pill:active {
-            transform: scale(0.96);
         }
 
         .count {
             color: #8b949e;
-        }
-
-        .random-section {
-            background: #161b22;
-            padding: 10px 14px;
-            border-bottom: 1px solid #30363d;
-        }
-
-        .random-button {
-            width: 100%;
-            background: linear-gradient(135deg, #238636, #2ea043);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 12px;
-            font-size: 1.05rem;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(35, 134, 54, 0.3);
-            transition: transform 0.1s ease;
-        }
-
-        .random-button:active {
-            transform: scale(0.97);
-        }
-
-        .progress {
-            margin-top: 5px;
-            text-align: center;
-            color: #8b949e;
-            font-size: 0.7rem;
-            font-weight: 500;
-        }
-
-        .search-section {
-            background: #161b22;
-            padding: 8px 14px 10px;
-            border-bottom: 1px solid #30363d;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .search-row {
-            display: flex;
-            gap: 6px;
-        }
-
-        .search-input {
-            flex: 1;
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 9px;
-            padding: 9px 12px;
-            color: #c9d1d9;
-            font-size: 0.85rem;
-            outline: none;
-        }
-
-        .search-input:focus {
-            border-color: #58a6ff;
-        }
-
-        .search-select {
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 9px;
-            padding: 0 8px;
-            color: #58a6ff;
             font-size: 0.75rem;
-            font-weight: 600;
-            outline: none;
-            cursor: pointer;
-            max-width: 130px;
+            background: #21262d;
+            padding: 4px 8px;
+            border-radius: 12px;
+            border: 1px solid #30363d;
         }
 
-        .btn-inject {
-            background: #238636;
-            color: white;
-            border: none;
-            border-radius: 9px;
-            padding: 0 12px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .btn-inject:active {
-            transform: scale(0.96);
-        }
-
+        /* Links area expands to fill the middle */
         .links {
             flex: 1;
             overflow-y: auto;
@@ -225,7 +117,7 @@
             transform: scale(0.99);
         }
 
-        /* Favorite Card Layout (iPhone App Icon Style) */
+        /* Favorite Card Layout */
         .link-card.favorite {
             background: #1a1f29;
             border-color: #d29922;
@@ -321,6 +213,120 @@
             color: #e3b341;
         }
 
+        /* --- THUMB ZONE BOTTOM CONTROL CENTER --- */
+        .thumb-hub {
+            background: #161b22;
+            border-top: 1px solid #30363d;
+            padding: 10px 14px 14px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 5;
+        }
+
+        .random-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .random-button {
+            flex: 1;
+            background: linear-gradient(135deg, #238636, #2ea043);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(35, 134, 54, 0.3);
+        }
+
+        .random-button:active {
+            transform: scale(0.97);
+        }
+
+        .progress {
+            color: #8b949e;
+            font-size: 0.68rem;
+            font-weight: 500;
+            text-align: right;
+            min-width: 75px;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .search-input {
+            flex: 1;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 9px;
+            padding: 9px 12px;
+            color: #c9d1d9;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #58a6ff;
+        }
+
+        .search-select {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 9px;
+            padding: 0 6px;
+            color: #58a6ff;
+            font-size: 0.72rem;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            max-width: 110px;
+        }
+
+        .btn-inject {
+            background: #238636;
+            color: white;
+            border: none;
+            border-radius: 9px;
+            padding: 0 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Bottom Thumb-Friendly Nav Bar (Right-Hand Biased Buttons) */
+        .thumb-nav {
+            display: flex;
+            justify-content: flex-end;
+            gap: 6px;
+            padding-top: 2px;
+        }
+
+        .btn-pill {
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 7px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #58a6ff;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-pill:active {
+            transform: scale(0.96);
+        }
+
+        /* Drawers and Modals */
         .overlay {
             position: fixed;
             inset: 0;
@@ -400,7 +406,7 @@
             font-size: 0.8rem;
         }
 
-        /* In-App Browser Modal Overlay */
+        /* In-App Browser Modal */
         .browser-modal {
             position: fixed;
             inset: 0;
@@ -426,7 +432,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 65%;
+            max-width: 60%;
         }
         .browser-actions {
             display: flex;
@@ -442,7 +448,7 @@
         /* Toast notification */
         .toast {
             position: fixed;
-            bottom: 30px;
+            bottom: 110px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
             background: #238636;
@@ -463,100 +469,59 @@
 
 <body>
 
+<!-- Minimal Header -->
 <header>
     <h1>Link Hub</h1>
-
-    <div class="header-right">
-        <!-- Yandex Copy Integration -->
-        <button class="btn-pill" onclick="copyYandexUrl()">
-            🟡 Yandex
-        </button>
-
-        <button class="btn-pill" onclick="toggleHistory()">
-            🕒 History
-        </button>
-
-        <span class="count btn-pill" id="linkCount">
-            0 Links
-        </span>
-    </div>
+    <span class="count" id="linkCount">0 Links</span>
 </header>
 
-<section class="random-section">
-    <button class="random-button" onclick="openRandomLink()">
-        🎲 Open Random Link
-    </button>
+<!-- Main Scrollable Link List -->
+<main class="links" id="links"></main>
 
-    <div class="progress" id="progress">
-        Loading...
+<!-- Bottom Control Center (Thumb Zone) -->
+<section class="thumb-hub">
+    
+    <!-- Randomizer Row -->
+    <div class="random-row">
+        <button class="random-button" onclick="openRandomLink()">
+            🎲 Open Random Link
+        </button>
+        <div class="progress" id="progress">0 / 0</div>
     </div>
-</section>
 
-<div class="search-section">
-
-    <!-- Direct Global URL / Google Search Bar -->
-    <input
-        type="text"
-        class="search-input"
-        id="globalSearchInput"
-        placeholder="Search Google or enter URL..."
-        onkeypress="handleGlobalSearchKey(event)"
-    >
-
+    <!-- Search / Inject Row -->
     <div class="search-row">
-
         <input
             type="text"
             class="search-input"
             id="injectInput"
-            placeholder="Search term to inject..."
+            placeholder="Search term..."
             onkeypress="handleInjectKey(event)"
         >
-
-        <select
-            class="search-select"
-            id="injectTarget">
-        </select>
-
-        <button
-            class="btn-inject"
-            onclick="injectSearch()">
-            Go
-        </button>
-
-    </div>
-</div>
-
-<main class="links" id="links"></main>
-
-<div
-    class="overlay"
-    id="overlay"
-    onclick="toggleHistory()">
-</div>
-
-<section
-    class="history-drawer"
-    id="historyDrawer">
-
-    <div class="history-header">
-        <h2>Recent Links</h2>
-
-        <button
-            class="close-button"
-            onclick="toggleHistory()">
-            ✕
-        </button>
+        <select class="search-select" id="injectTarget"></select>
+        <button class="btn-inject" onclick="injectSearch()">Go</button>
     </div>
 
-    <div
-        class="history-list"
-        id="historyList">
+    <!-- Right-biased Thumb Navigation Bar -->
+    <div class="thumb-nav">
+        <button class="btn-pill" onclick="copyYandexUrl()">🟡 Yandex</button>
+        <button class="btn-pill" onclick="toggleHistory()">🕒 History</button>
     </div>
 
 </section>
 
-<!-- In-App Browser Modal to keep links inside the PWA -->
+<!-- Overlays and Drawers -->
+<div class="overlay" id="overlay" onclick="toggleHistory()"></div>
+
+<section class="history-drawer" id="historyDrawer">
+    <div class="history-header">
+        <h2>Recent Links</h2>
+        <button class="close-button" onclick="toggleHistory()">✕</button>
+    </div>
+    <div class="history-list" id="historyList"></div>
+</section>
+
+<!-- In-App Browser Modal -->
 <div class="browser-modal" id="browserModal">
     <div class="browser-header">
         <span class="browser-url" id="browserUrlText">Loading...</span>
@@ -572,19 +537,11 @@
 <div class="toast" id="toast">Copied custom link for Yandex!</div>
 
 <script>
-    /*
-     * ============================================================
-     * CATEGORIES
-     * ============================================================
-     */
-
     const CATEGORIES = [
-
         {
             name: "Core Apps",
             color: "#238636",
             icon: "⚡",
-
             links: [
                 "https://www.reddit.com/",
                 "https://x.com/",
@@ -596,12 +553,10 @@
                 "https://mega.nz/login"
             ]
         },
-
         {
             name: "Lesser Used Apps",
             color: "#58a6ff",
             icon: "🚀",
-
             links: [
                 "https://bsky.app/",
                 "https://www.pixiv.net/en/",
@@ -611,12 +566,10 @@
                 "https://grok.com/imagine"
             ]
         },
-
         {
             name: "AI Chat Bots",
             color: "#a371f7",
             icon: "🤖",
-
             links: [
                 "https://chatgpt.com/",
                 "https://gemini.google.com/",
@@ -624,24 +577,20 @@
                 "https://spicychat.ai/"
             ]
         },
-
         {
             name: "Story Websites",
             color: "#db6d28",
             icon: "📖",
-
             links: [
                 "https://archiveofourown.org/",
                 "https://www.hentai-foundry.com/site/index",
                 "https://www.fanfiction.net/"
             ]
         },
-
         {
             name: "Random Other Websites",
             color: "#f85149",
             icon: "🎲",
-
             links: [
                 "https://nhentai.net/",
                 "https://nhentai.net/category/doujinshi/?sort=popular-month",
@@ -657,26 +606,20 @@
                 "https://www.webtoons.com/en/"
             ]
         },
-
         {
             name: "Art Sorters",
             color: "#e3b341",
             icon: "🎨",
-
             links: [
                 "https://kurosearch.com/",
                 "https://kurozenzen.github.io/r34-react/#/",
                 "https://r34.app/"
             ]
         }
-
     ];
 
-
-    const ALL_LINKS =
-        CATEGORIES.flatMap(cat => cat.links);
-
-    const STORAGE_PREFIX = "linkhub_";
+    const ALL_LINKS = CATEGORIES.flatMap(cat => cat.links);
+    const STORAGE_PREFIX = "linkhub_thumb_";
 
     let shuffledLinks = [];
     let currentIndex = 0;
@@ -684,73 +627,36 @@
     let history = [];
     let activeBrowserUrl = "";
 
-
-    /*
-     * ============================================================
-     * INITIALIZATION
-     * ============================================================
-     */
-
     document.addEventListener("DOMContentLoaded", () => {
-
         loadData();
         loadShuffle();
-
         populateInjectDropdown();
-
         renderLinks();
         renderHistory();
-
         updateUI();
-
     });
-
-
-    /*
-     * ============================================================
-     * YANDEX CLIPBOARD & INTENT HELPER
-     * ============================================================
-     */
 
     function copyYandexUrl() {
         const customYandexUrl = "yandexbrowser-local://4a4ed72c-c2e5-443a-9127-7911b23d96c1/index.html";
-        
         navigator.clipboard.writeText(customYandexUrl).then(() => {
             showToast("Copied link! Opening Yandex...");
-            setTimeout(() => {
-                window.location.href = "yandexbrowser://";
-            }, 500);
-        }).catch(() => {
-            showToast("Could not copy link automatically.");
-        });
+            setTimeout(() => { window.location.href = "yandexbrowser://"; }, 500);
+        }).catch(() => { showToast("Could not copy link automatically."); });
     }
 
     function showToast(message) {
         const toast = document.getElementById("toast");
         toast.textContent = message;
         toast.classList.add("show");
-        setTimeout(() => {
-            toast.classList.remove("show");
-        }, 2500);
+        setTimeout(() => { toast.classList.remove("show"); }, 2500);
     }
-
-
-    /*
-     * ============================================================
-     * STORAGE
-     * ============================================================
-     */
 
     function loadData() {
         try {
             favorites = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "fav")) || [];
             history = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "hist")) || [];
-        } catch (e) {
-            favorites = [];
-            history = [];
-        }
+        } catch (e) { favorites = []; history = []; }
     }
-
 
     function saveData() {
         try {
@@ -759,18 +665,10 @@
         } catch (e) {}
     }
 
-
-    /*
-     * ============================================================
-     * SHUFFLE
-     * ============================================================
-     */
-
     function loadShuffle() {
         try {
             const q = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "queue"));
             const idx = Number(localStorage.getItem(STORAGE_PREFIX + "idx"));
-
             if (Array.isArray(q) && q.length === ALL_LINKS.length && !isNaN(idx)) {
                 shuffledLinks = q;
                 currentIndex = idx;
@@ -780,14 +678,12 @@
         createShuffle();
     }
 
-
     function saveShuffle() {
         try {
             localStorage.setItem(STORAGE_PREFIX + "queue", JSON.stringify(shuffledLinks));
             localStorage.setItem(STORAGE_PREFIX + "idx", currentIndex);
         } catch (e) {}
     }
-
 
     function createShuffle() {
         shuffledLinks = [...ALL_LINKS];
@@ -799,29 +695,14 @@
         saveShuffle();
     }
 
-
-    /*
-     * ============================================================
-     * SEARCH DROPDOWN (LOGICAL WEBSITES ONLY)
-     * ============================================================
-     */
-
     function populateInjectDropdown() {
         const select = document.getElementById("injectTarget");
         select.innerHTML = "";
-
         const logicalSites = ALL_LINKS.filter(url => {
-            return url.includes("reddit.com") ||
-                   url.includes("x.com") ||
-                   url.includes("archiveofourown.org") ||
-                   url.includes("pixiv.net") ||
-                   url.includes("kurosearch.com") ||
-                   url.includes("janitorai.com") ||
-                   url.includes("spicychat.ai") ||
-                   url.includes("youtube.com") ||
-                   url.includes("google.com");
+            return url.includes("reddit.com") || url.includes("x.com") || url.includes("archiveofourown.org") ||
+                   url.includes("pixiv.net") || url.includes("kurosearch.com") || url.includes("janitorai.com") ||
+                   url.includes("spicychat.ai") || url.includes("youtube.com") || url.includes("google.com");
         });
-
         logicalSites.forEach(url => {
             const option = document.createElement("option");
             option.value = url;
@@ -830,44 +711,8 @@
         });
     }
 
-
-    /*
-     * ============================================================
-     * GLOBAL SEARCH BAR (URL OR GOOGLE)
-     * ============================================================
-     */
-
-    function handleGlobalSearchKey(event) {
-        if (event.key === "Enter") {
-            const val = document.getElementById("globalSearchInput").value.trim();
-            if (!val) return;
-
-            let targetUrl = val;
-            if (!val.startsWith("http://") && !val.startsWith("https://")) {
-                if (val.includes(".") && !val.includes(" ")) {
-                    targetUrl = "https://" + val;
-                } else {
-                    targetUrl = `https://www.google.com/search?q=${encodeURIComponent(val)}`;
-                }
-            }
-
-            document.getElementById("globalSearchInput").value = "";
-            launchLink(targetUrl);
-        }
-    }
-
-
-    /*
-     * ============================================================
-     * OPEN LINK (ISOLATED IN PWA MODAL)
-     * ============================================================
-     */
-
     function launchLink(url, event) {
-        if (event) {
-            event.stopPropagation();
-        }
-
+        if (event) event.stopPropagation();
         activeBrowserUrl = url;
         addToHistory(url);
         updateUI();
@@ -883,86 +728,43 @@
 
     function closeBrowserModal() {
         const modal = document.getElementById("browserModal");
-        const iframe = document.getElementById("browserIframe");
-        iframe.src = "about:blank";
+        document.getElementById("browserIframe").src = "about:blank";
         modal.classList.remove("open");
     }
 
     function openInExternalSafari() {
-        if (activeBrowserUrl) {
-            window.open(activeBrowserUrl, "_blank");
-        }
+        if (activeBrowserUrl) window.open(activeBrowserUrl, "_blank");
     }
-
-
-    /*
-     * ============================================================
-     * RANDOM LINK
-     * ============================================================
-     */
 
     function openRandomLink() {
         if (ALL_LINKS.length === 0) return;
-        if (currentIndex >= shuffledLinks.length) {
-            createShuffle();
-        }
+        if (currentIndex >= shuffledLinks.length) createShuffle();
         const url = shuffledLinks[currentIndex++];
         saveShuffle();
         launchLink(url);
     }
 
-
-    /*
-     * ============================================================
-     * FAVORITES
-     * ============================================================
-     */
-
     function toggleFavorite(url, event) {
-        if (event) {
-            event.stopPropagation();
-        }
-
+        if (event) event.stopPropagation();
         const idx = favorites.indexOf(url);
-        if (idx > -1) {
-            favorites.splice(idx, 1);
-        } else {
-            favorites.push(url);
-        }
-
+        if (idx > -1) favorites.splice(idx, 1);
+        else favorites.push(url);
         saveData();
         renderLinks();
     }
 
-
-    /*
-     * ============================================================
-     * HISTORY
-     * ============================================================
-     */
-
     function addToHistory(url) {
         history = history.filter(item => item !== url);
         history.unshift(url);
-        if (history.length > 10) {
-            history.pop();
-        }
+        if (history.length > 10) history.pop();
         saveData();
         renderHistory();
     }
-
-
-    /*
-     * ============================================================
-     * SEARCH INJECTION
-     * ============================================================
-     */
 
     function injectSearch() {
         const input = document.getElementById("injectInput");
         const select = document.getElementById("injectTarget");
         const query = input.value.trim();
-
         if (!query) return;
 
         const targetUrl = select.value;
@@ -995,19 +797,9 @@
         input.value = "";
     }
 
-
     function handleInjectKey(event) {
-        if (event.key === "Enter") {
-            injectSearch();
-        }
+        if (event.key === "Enter") injectSearch();
     }
-
-
-    /*
-     * ============================================================
-     * CUSTOM BRAND COLOR & ICON MAPPING
-     * ============================================================
-     */
 
     function getSiteBrandInfo(url) {
         if (url.includes("reddit.com")) return { color: '#FF4500', iconType: 'img', iconVal: 'https://images.seeklogo.com/logo-png/40/1/reddit-logo-png_seeklogo-409489.png' };
@@ -1018,23 +810,19 @@
         if (url.includes("tiktok.com")) return { color: '#EE1D52', iconType: 'img', iconVal: 'https://cdn.pixabay.com/photo/2021/06/15/12/28/tiktok-6338432_1280.png' };
         if (url.includes("instagram.com")) return { color: '#E1306C', iconType: 'img', iconVal: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbu_z8wNCMAxpXlGsH4Fj3DJF93Lfz3Dh0ehRa9d_YKAGHyiaJ-uXSU5M&s=10' };
         if (url.includes("mega.nz")) return { color: '#D9272E', iconType: 'img', iconVal: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvT8Ire2B4qJfE6Pvi6U_xZzABveK3fNLeVOwRK314Xb3TK5LeaOHJpgY&s=10' };
-
         if (url.includes("bsky.app")) return { color: '#0085FF', iconType: 'img', iconVal: 'https://framerusercontent.com/images/WvDCcVDExoPpTkDo6jy7ePIA6YQ.png?width=460&height=460' };
         if (url.includes("pixiv.net")) return { color: '#049CFF', iconType: 'img', iconVal: 'https://cdn.nwe.io/files/x/0a/39/12fa6b6ef6f2de2c1c6f7cbe749b.jpg' };
         if (url.includes("threads.com")) return { color: '#4A90E2', iconType: 'img', iconVal: 'https://upload.wikimedia.org/wikipedia/commons/d/db/Threads_%28app%29.png' };
         if (url.includes("deviantart.com")) return { color: '#05CC47', iconType: 'img', iconVal: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/e965175b-80a8-4efe-a98c-9b1a5620bb3e/dg5y0nl-089a72e7-b646-4189-8637-423a900a1e9b.jpg' };
         if (url.includes("tumblr.com")) return { color: '#36465D', iconType: 'img', iconVal: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Tumblr.svg/330px-Tumblr.svg.png' };
         if (url.includes("grok.com")) return { color: '#E7E9EA', iconType: 'img', iconVal: 'https://pbs.twimg.com/media/GkMq1KUbUAAE3U9.png' };
-
         if (url.includes("chatgpt.com")) return { color: '#10A37F', iconType: 'img', iconVal: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0ywPZuqhTP3RdN4pk1W8TImzwhxdHbDVMxt84ZLBZCHu2uJd8GIHNkm4&s=10' };
         if (url.includes("gemini.google.com")) return { color: '#8E75B2', iconType: 'img', iconVal: 'https://cdn.jsdelivr.net/npm/@thesvg/icons/icons/google-gemini.svg' };
         if (url.includes("janitorai.com")) return { color: '#FF69B4', iconType: 'img', iconVal: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUsbZWLSXhfqb4EsPBtB1dA-umAnglu2B1u2I2Vuwpew&s=10' };
         if (url.includes("spicychat.ai")) return { color: '#A420D0', iconType: 'img', iconVal: 'https://shipthedeal.com/assets/uploads/store/spicychat-coupon-29039.png' };
-
         if (url.includes("archiveofourown.org")) return { color: '#990000', iconType: 'img', iconVal: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRX20rL25M5Sdd5rIENYPsxhPZIgqN5ICwy0rj6H1i_LDNEjN1VDLv0u0k7&s=10' };
         if (url.includes("hentai-foundry.com")) return { color: '#FFB6C1', iconType: 'img', iconVal: 'https://img.hentai-foundry.com/themes/Dark/images/logo.png' };
         if (url.includes("fanfiction.net")) return { color: '#2B579A', iconType: 'img', iconVal: 'https://upload.wikimedia.org/wikipedia/en/d/de/FanFiction.net_logo.png' };
-
         if (url.includes("nhentai.net/category/doujinshi")) return { color: '#FF1493', iconType: 'img', iconVal: 'https://ih1.redbubble.net/image.2802196537.0680/ur,tote_bag_context_medium,product_square,600x600.jpg' };
         if (url.includes("nhentai.net")) return { color: '#FF69B4', iconType: 'img', iconVal: 'https://pbs.twimg.com/profile_images/1959842006655758336/ZipTzeyh_400x400.jpg' };
         if (url.includes("nhentai.to")) return { color: '#FF8DA1', iconType: 'img', iconVal: 'https://m.media-amazon.com/images/I/41979CG29kL._AC_UL450_SY450_QL70_.jpg' };
@@ -1047,40 +835,22 @@
         if (url.includes("e-hentai.org")) return { color: '#5C3317', iconType: 'img', iconVal: 'https://storage.moegirl.org.cn/moegirl/commons/8/8d/E-Hentai_LOGO.jpg' };
         if (url.includes("hitomi.la")) return { color: '#2196F3', iconType: 'img', iconVal: 'https://play-lh.googleusercontent.com/m_ZnqE7gqqcO9HA_sKhG4nbKEh5YtwMeshZoa26zq3Ey0z6UuI_b4wagj2ejcFg-Kx6nEXfGXlmJXZzQaqS_-uc=w480-h960' };
         if (url.includes("webtoons.com")) return { color: '#00DC64', iconType: 'img', iconVal: 'https://i.pinimg.com/736x/09/28/35/092835edf796d37363489f06afc89016.jpg' };
-
         if (url.includes("kurosearch.com")) return { color: '#0077BE', iconType: 'img', iconVal: 'https://site-images.similarcdn.com/image?url=kurosearch.com&t=4&s=1&h=b28f531cc5ece018bf68aa556d6b125df07455527b39d96b27ad0cd81904d6d3' };
         if (url.includes("kurozenzen")) return { color: '#9B59B6', iconType: 'img', iconVal: 'https://repository-images.githubusercontent.com/187081926/0d77aa80-82e5-11eb-9e89-9ef3088d147c' };
         if (url.includes("r34")) return { color: '#FF7F00', iconType: 'img', iconVal: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyHGK48q3TQaTLw5jfyo57K81uHSIvNeF8v8UZ84OIwg&s=10' };
-
         return { color: '#58a6ff', iconType: 'fallback', iconVal: '🌐' };
     }
-
-
-    /*
-     * ============================================================
-     * RENDER LINKS
-     * ============================================================
-     */
 
     function renderLinks() {
         const container = document.getElementById("links");
         container.innerHTML = "";
 
         const favs = ALL_LINKS.filter(u => favorites.includes(u));
-
         if (favs.length > 0) {
             const favGroup = document.createElement("div");
             favGroup.className = "category-group";
-
-            favGroup.innerHTML =
-                `<div class="category-header" style="color:#e3b341;">
-                    ⭐ Favorites (${favs.length})
-                </div>`;
-
-            favs.forEach(u => {
-                favGroup.appendChild(createCard(u, true));
-            });
-
+            favGroup.innerHTML = `<div class="category-header" style="color:#e3b341;">⭐ Favorites (${favs.length})</div>`;
+            favs.forEach(u => favGroup.appendChild(createCard(u, true)));
             container.appendChild(favGroup);
         }
 
@@ -1097,20 +867,10 @@
             header.innerHTML = `${cat.icon} ${cat.name} (${unselectedLinks.length})`;
             group.appendChild(header);
 
-            unselectedLinks.forEach(u => {
-                group.appendChild(createCard(u, false));
-            });
-
+            unselectedLinks.forEach(u => group.appendChild(createCard(u, false)));
             container.appendChild(group);
         });
     }
-
-
-    /*
-     * ============================================================
-     * CREATE LINK CARD
-     * ============================================================
-     */
 
     function createCard(url, isFav) {
         const card = document.createElement("div");
@@ -1157,30 +917,17 @@
         const favoriteButton = document.createElement("button");
         favoriteButton.className = "favorite-button" + (isFav ? " active" : "");
         favoriteButton.textContent = "★";
-
-        favoriteButton.addEventListener("click", event => {
-            toggleFavorite(url, event);
-        });
+        favoriteButton.addEventListener("click", event => toggleFavorite(url, event));
 
         actions.appendChild(openButton);
         actions.appendChild(favoriteButton);
 
         card.appendChild(info);
         card.appendChild(actions);
-
-        card.addEventListener("click", event => {
-            launchLink(url, event);
-        });
+        card.addEventListener("click", event => launchLink(url, event));
 
         return card;
     }
-
-
-    /*
-     * ============================================================
-     * HISTORY
-     * ============================================================
-     */
 
     function renderHistory() {
         const container = document.getElementById("historyList");
@@ -1191,10 +938,9 @@
             return;
         }
 
-        history.forEach((url) => {
+        history.forEach(url => {
             const card = document.createElement("div");
             card.className = "link-card";
-
             const brand = getSiteBrandInfo(url);
             card.style.borderColor = brand.color + "55";
 
@@ -1236,42 +982,27 @@
             actions.appendChild(button);
             card.appendChild(info);
             card.appendChild(actions);
-
-            card.addEventListener("click", event => {
-                launchLink(url, event);
-            });
+            card.addEventListener("click", event => launchLink(url, event));
 
             container.appendChild(card);
         });
     }
 
-
-    /*
-     * ============================================================
-     * HELPERS
-     * ============================================================
-     */
-
     function getCleanName(url) {
         try {
             return new URL(url).hostname.replace(/^www\./, "");
-        } catch (e) {
-            return url;
-        }
+        } catch (e) { return url; }
     }
-
 
     function updateUI() {
         document.getElementById("linkCount").textContent = `${ALL_LINKS.length} Links`;
-        document.getElementById("progress").textContent = `Progress: ${currentIndex} / ${ALL_LINKS.length}`;
+        document.getElementById("progress").textContent = `${currentIndex} / ${ALL_LINKS.length}`;
     }
-
 
     function toggleHistory() {
         document.getElementById("historyDrawer").classList.toggle("open");
         document.getElementById("overlay").classList.toggle("open");
     }
-
 </script>
 
 </body>
