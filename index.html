@@ -206,6 +206,7 @@
             padding: 0 4px;
         }
 
+        /* Standard Link Card Layout */
         .link-card {
             background: #161b22;
             border: 1px solid #30363d;
@@ -215,9 +216,7 @@
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
-            transition:
-                background-color 0.15s ease,
-                border-color 0.15s ease;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
         }
 
         .link-card:active {
@@ -226,9 +225,29 @@
             transform: scale(0.99);
         }
 
+        /* Favorite Card Layout (iPhone App Icon Style) */
         .link-card.favorite {
             background: #1a1f29;
             border-color: #d29922;
+            padding: 16px 18px;
+            border-radius: 20px;
+        }
+
+        .link-card.favorite .link-icon-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+        }
+
+        .link-card.favorite .link-icon-fallback {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            font-size: 1.5rem;
+        }
+
+        .link-card.favorite .link-name {
+            font-size: 1.2rem;
         }
 
         .link-info {
@@ -236,17 +255,25 @@
             flex: 1;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .link-icon {
-            font-size: 1rem;
-            width: 28px;
-            height: 28px;
+        .link-icon-fallback {
+            font-size: 1.1rem;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .link-icon-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            object-fit: cover;
             flex-shrink: 0;
         }
 
@@ -256,17 +283,11 @@
         }
 
         .link-name {
-            font-size: 0.95rem;
+            font-size: 1.05rem;
             font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-        }
-
-        .link-number {
-            color: #8b949e;
-            font-size: 0.65rem;
-            margin-top: 1px;
         }
 
         .actions {
@@ -323,8 +344,7 @@
             border-top: 1px solid #30363d;
             border-radius: 24px 24px 0 0;
             transform: translateY(100%);
-            transition:
-                transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+            transition: transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
             z-index: 11;
             display: flex;
             flex-direction: column;
@@ -379,6 +399,26 @@
             margin-top: 30px;
             font-size: 0.85rem;
         }
+
+        /* Toast notification for copy */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #238636;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            transition: transform 0.3s ease;
+            z-index: 99;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
     </style>
 </head>
 
@@ -388,8 +428,8 @@
     <h1>Link Hub</h1>
 
     <div class="header-right">
-        <!-- Attempts to launch Yandex Browser -->
-        <button class="btn-pill" onclick="openYandex()">
+        <!-- Yandex Copy Integration -->
+        <button class="btn-pill" onclick="copyYandexUrl()">
             🟡 Yandex
         </button>
 
@@ -415,12 +455,13 @@
 
 <div class="search-section">
 
+    <!-- Direct Global URL / Google Search Bar -->
     <input
         type="text"
         class="search-input"
-        id="searchInput"
-        placeholder="Filter links..."
-        oninput="filterLinks(this.value)"
+        id="globalSearchInput"
+        placeholder="Search Google or enter URL..."
+        onkeypress="handleGlobalSearchKey(event)"
     >
 
     <div class="search-row">
@@ -476,25 +517,10 @@
 
 </section>
 
+<!-- Toast Message -->
+<div class="toast" id="toast">Copied URL for Yandex! Open app to paste.</div>
+
 <script>
-
-    /*
-     * ============================================================
-     * YANDEX BROWSER
-     * ============================================================
-     *
-     * This is a custom URL scheme.
-     *
-     * iOS may hand this URL to Yandex Browser if the app has
-     * registered the scheme.
-     *
-     * IMPORTANT:
-     * A webpage cannot force iOS to open another application.
-     */
-
-    const YANDEX_LOCAL_URL =
-        "yandexbrowser-local://4a4ed72c-c2e5-443a-9127-7911b23d96c1/index.html";
-
 
     /*
      * ============================================================
@@ -512,7 +538,9 @@
             links: [
                 "https://www.reddit.com/",
                 "https://x.com/",
-                "https://discord.com/",
+                "https://discord.com/channels/@me",
+                "https://www.youtube.com/",
+                "https://www.google.com/",
                 "https://www.tiktok.com/en/",
                 "https://www.instagram.com/?hl=en",
                 "https://mega.nz/login"
@@ -534,12 +562,6 @@
             ]
         },
 
-        /*
-         * ========================================================
-         * AI CHAT BOTS
-         * ========================================================
-         */
-
         {
             name: "AI Chat Bots",
             color: "#a371f7",
@@ -548,7 +570,8 @@
             links: [
                 "https://chatgpt.com/",
                 "https://gemini.google.com/",
-                "https://janitorai.com/"
+                "https://janitorai.com/",
+                "https://spicychat.ai/"
             ]
         },
 
@@ -571,12 +594,16 @@
 
             links: [
                 "https://nhentai.net/",
+                "https://nhentai.net/category/doujinshi/?sort=popular-month",
+                "https://nhentai.to/go",
+                "https://nhentai.xxx/",
+                "https://theporndude.com/4201/imhentai",
                 "https://myhentaicomics.com/",
                 "https://myhentaigallery.com/",
                 "https://hentaiera.com/",
                 "https://doujins.com/",
-                "https://e-hentai.org/",
-                "https://hitomi.la/",
+                "https://e-hentai.org/?f_search=language%3Aenglish+impregnation+%22-ai+generated%22&advsearch=1",
+                "https://hitomi.la/popular/month-all.html",
                 "https://www.webtoons.com/en/"
             ]
         },
@@ -605,6 +632,7 @@
     let currentIndex = 0;
     let favorites = [];
     let history = [];
+    let lastOpenedUrl = "";
 
 
     /*
@@ -630,19 +658,26 @@
 
     /*
      * ============================================================
-     * YANDEX LAUNCHER
+     * YANDEX CLIPBOARD HELPER
      * ============================================================
      */
 
-    function openYandex() {
+    function copyYandexUrl() {
+        const targetUrl = lastOpenedUrl || window.location.href;
+        navigator.clipboard.writeText(targetUrl).then(() => {
+            showToast("Copied link! Open Yandex & paste.");
+        }).catch(() => {
+            showToast("Could not copy link automatically.");
+        });
+    }
 
-        /*
-         * Direct navigation is preferable to window.open()
-         * for custom URL schemes on iOS.
-         */
-
-        window.location.href = YANDEX_LOCAL_URL;
-
+    function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, 2500);
     }
 
 
@@ -653,49 +688,21 @@
      */
 
     function loadData() {
-
         try {
-
-            favorites =
-                JSON.parse(
-                    localStorage.getItem(
-                        STORAGE_PREFIX + "fav"
-                    )
-                ) || [];
-
-            history =
-                JSON.parse(
-                    localStorage.getItem(
-                        STORAGE_PREFIX + "hist"
-                    )
-                ) || [];
-
+            favorites = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "fav")) || [];
+            history = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "hist")) || [];
         } catch (e) {
-
             favorites = [];
             history = [];
-
         }
-
     }
 
 
     function saveData() {
-
         try {
-
-            localStorage.setItem(
-                STORAGE_PREFIX + "fav",
-                JSON.stringify(favorites)
-            );
-
-            localStorage.setItem(
-                STORAGE_PREFIX + "hist",
-                JSON.stringify(history)
-            );
-
+            localStorage.setItem(STORAGE_PREFIX + "fav", JSON.stringify(favorites));
+            localStorage.setItem(STORAGE_PREFIX + "hist", JSON.stringify(history));
         } catch (e) {}
-
     }
 
 
@@ -706,121 +713,93 @@
      */
 
     function loadShuffle() {
-
         try {
+            const q = JSON.parse(localStorage.getItem(STORAGE_PREFIX + "queue"));
+            const idx = Number(localStorage.getItem(STORAGE_PREFIX + "idx"));
 
-            const q =
-                JSON.parse(
-                    localStorage.getItem(
-                        STORAGE_PREFIX + "queue"
-                    )
-                );
-
-            const idx =
-                Number(
-                    localStorage.getItem(
-                        STORAGE_PREFIX + "idx"
-                    )
-                );
-
-            if (
-                Array.isArray(q) &&
-                q.length === ALL_LINKS.length &&
-                !isNaN(idx)
-            ) {
-
+            if (Array.isArray(q) && q.length === ALL_LINKS.length && !isNaN(idx)) {
                 shuffledLinks = q;
                 currentIndex = idx;
-
                 return;
-
             }
-
         } catch (e) {}
-
         createShuffle();
-
     }
 
 
     function saveShuffle() {
-
         try {
-
-            localStorage.setItem(
-                STORAGE_PREFIX + "queue",
-                JSON.stringify(shuffledLinks)
-            );
-
-            localStorage.setItem(
-                STORAGE_PREFIX + "idx",
-                currentIndex
-            );
-
+            localStorage.setItem(STORAGE_PREFIX + "queue", JSON.stringify(shuffledLinks));
+            localStorage.setItem(STORAGE_PREFIX + "idx", currentIndex);
         } catch (e) {}
-
     }
 
 
     function createShuffle() {
-
         shuffledLinks = [...ALL_LINKS];
-
-        for (
-            let i = shuffledLinks.length - 1;
-            i > 0;
-            i--
-        ) {
-
-            const j =
-                Math.floor(
-                    Math.random() * (i + 1)
-                );
-
-            [
-                shuffledLinks[i],
-                shuffledLinks[j]
-            ] = [
-                shuffledLinks[j],
-                shuffledLinks[i]
-            ];
-
+        for (let i = shuffledLinks.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledLinks[i], shuffledLinks[j]] = [shuffledLinks[j], shuffledLinks[i]];
         }
-
         currentIndex = 0;
-
         saveShuffle();
-
     }
 
 
     /*
      * ============================================================
-     * SEARCH DROPDOWN
+     * SEARCH DROPDOWN (LOGICAL WEBSITES ONLY)
      * ============================================================
      */
 
     function populateInjectDropdown() {
-
-        const select =
-            document.getElementById("injectTarget");
-
+        const select = document.getElementById("injectTarget");
         select.innerHTML = "";
 
-        ALL_LINKS.forEach(url => {
-
-            const option =
-                document.createElement("option");
-
-            option.value = url;
-
-            option.textContent =
-                getCleanName(url);
-
-            select.appendChild(option);
-
+        const logicalSites = ALL_LINKS.filter(url => {
+            return url.includes("reddit.com") ||
+                   url.includes("x.com") ||
+                   url.includes("archiveofourown.org") ||
+                   url.includes("pixiv.net") ||
+                   url.includes("kurosearch.com") ||
+                   url.includes("janitorai.com") ||
+                   url.includes("spicychat.ai") ||
+                   url.includes("youtube.com") ||
+                   url.includes("google.com");
         });
 
+        logicalSites.forEach(url => {
+            const option = document.createElement("option");
+            option.value = url;
+            option.textContent = getCleanName(url);
+            select.appendChild(option);
+        });
+    }
+
+
+    /*
+     * ============================================================
+     * GLOBAL SEARCH BAR (URL OR GOOGLE)
+     * ============================================================
+     */
+
+    function handleGlobalSearchKey(event) {
+        if (event.key === "Enter") {
+            const val = document.getElementById("globalSearchInput").value.trim();
+            if (!val) return;
+
+            let targetUrl = val;
+            if (!val.startsWith("http://") && !val.startsWith("https://")) {
+                if (val.includes(".") && !val.includes(" ")) {
+                    targetUrl = "https://" + val;
+                } else {
+                    targetUrl = `https://www.google.com/search?q=${encodeURIComponent(val)}`;
+                }
+            }
+
+            document.getElementById("globalSearchInput").value = "";
+            launchLink(targetUrl);
+        }
     }
 
 
@@ -831,33 +810,21 @@
      */
 
     function launchLink(url, event) {
-
         if (event) {
             event.stopPropagation();
         }
 
+        lastOpenedUrl = url;
         addToHistory(url);
-
         updateUI();
 
-        /*
-         * Opening a new window preserves the behavior
-         * of your original version.
-         */
-
         const newWindow = window.open();
-
         if (newWindow) {
-
             newWindow.opener = null;
             newWindow.location = url;
-
         } else {
-
             window.open(url, "_blank");
-
         }
-
     }
 
 
@@ -868,22 +835,13 @@
      */
 
     function openRandomLink() {
-
-        if (ALL_LINKS.length === 0) {
-            return;
-        }
-
+        if (ALL_LINKS.length === 0) return;
         if (currentIndex >= shuffledLinks.length) {
             createShuffle();
         }
-
-        const url =
-            shuffledLinks[currentIndex++];
-
+        const url = shuffledLinks[currentIndex++];
         saveShuffle();
-
         launchLink(url);
-
     }
 
 
@@ -894,34 +852,19 @@
      */
 
     function toggleFavorite(url, event) {
-
         if (event) {
             event.stopPropagation();
         }
 
-        const idx =
-            favorites.indexOf(url);
-
+        const idx = favorites.indexOf(url);
         if (idx > -1) {
-
             favorites.splice(idx, 1);
-
         } else {
-
             favorites.push(url);
-
         }
 
         saveData();
-
         renderLinks();
-
-        filterLinks(
-            document.getElementById(
-                "searchInput"
-            ).value
-        );
-
     }
 
 
@@ -932,88 +875,13 @@
      */
 
     function addToHistory(url) {
-
-        history =
-            history.filter(
-                item => item !== url
-            );
-
+        history = history.filter(item => item !== url);
         history.unshift(url);
-
         if (history.length > 10) {
             history.pop();
         }
-
         saveData();
-
         renderHistory();
-
-    }
-
-
-    /*
-     * ============================================================
-     * FILTER
-     * ============================================================
-     */
-
-    function filterLinks(query) {
-
-        const term =
-            query.toLowerCase().trim();
-
-        const groups =
-            document.querySelectorAll(
-                ".category-group"
-            );
-
-        groups.forEach(group => {
-
-            const cards =
-                group.querySelectorAll(
-                    ".link-card"
-                );
-
-            let visibleCount = 0;
-
-            cards.forEach(card => {
-
-                const name =
-                    card.querySelector(
-                        ".link-name"
-                    ).textContent.toLowerCase();
-
-                if (
-                    name.includes(term) ||
-                    term === ""
-                ) {
-
-                    card.style.display = "flex";
-                    visibleCount++;
-
-                } else {
-
-                    card.style.display = "none";
-
-                }
-
-            });
-
-            if (
-                visibleCount === 0 &&
-                term !== ""
-            ) {
-
-                group.style.display = "none";
-
-            } else {
-
-                group.style.display = "flex";
-
-            }
-
-        });
-
     }
 
 
@@ -1024,281 +892,124 @@
      */
 
     function injectSearch() {
+        const input = document.getElementById("injectInput");
+        const select = document.getElementById("injectTarget");
+        const query = input.value.trim();
 
-        const input =
-            document.getElementById(
-                "injectInput"
-            );
-
-        const select =
-            document.getElementById(
-                "injectTarget"
-            );
-
-        const query =
-            input.value.trim();
-
-        if (!query) {
-            return;
-        }
+        if (!query) return;
 
         const targetUrl = select.value;
-
         let finalUrl = targetUrl;
 
-
-        /*
-         * ARCHIVE OF OUR OWN
-         */
-
-        if (
-            targetUrl.includes(
-                "archiveofourown.org"
-            )
-        ) {
-
-            finalUrl =
-                `https://archiveofourown.org/works/search?work_search[query]=${encodeURIComponent(query)}`;
-
+        if (targetUrl.includes("archiveofourown.org")) {
+            finalUrl = `https://archiveofourown.org/works/search?work_search[query]=${encodeURIComponent(query)}`;
+        } else if (targetUrl.includes("kurosearch.com")) {
+            finalUrl = `https://kurosearch.com/?q=${encodeURIComponent(query)}`;
+        } else if (targetUrl.includes("reddit.com")) {
+            finalUrl = `https://www.reddit.com/search/?q=${encodeURIComponent(query)}`;
+        } else if (targetUrl.includes("pixiv.net")) {
+            finalUrl = `https://www.pixiv.net/en/tags/${encodeURIComponent(query)}`;
+        } else if (targetUrl.includes("x.com")) {
+            finalUrl = `https://x.com/search?q=${encodeURIComponent(query)}`;
+        } else if (targetUrl.includes("janitorai.com")) {
+            finalUrl = `https://janitorai.com/search?query=${encodeURIComponent(query)}`;
+        } else if (targetUrl.includes("spicychat.ai")) {
+            finalUrl = `https://spicychat.ai/search?q=${encodeURIComponent(query)}`;
+        } else if (targetUrl.includes("youtube.com")) {
+            finalUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+        } else if (targetUrl.includes("google.com")) {
+            finalUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        } else {
+            const separator = targetUrl.includes("?") ? "&" : "?";
+            finalUrl = `${targetUrl}${separator}q=${encodeURIComponent(query)}`;
         }
-
-
-        /*
-         * KUROSEARCH
-         */
-
-        else if (
-            targetUrl.includes(
-                "kurosearch.com"
-            )
-        ) {
-
-            finalUrl =
-                `https://kurosearch.com/?q=${encodeURIComponent(query)}`;
-
-        }
-
-
-        /*
-         * REDDIT
-         */
-
-        else if (
-            targetUrl.includes(
-                "reddit.com"
-            )
-        ) {
-
-            finalUrl =
-                `https://www.reddit.com/search/?q=${encodeURIComponent(query)}`;
-
-        }
-
-
-        /*
-         * PIXIV
-         */
-
-        else if (
-            targetUrl.includes(
-                "pixiv.net"
-            )
-        ) {
-
-            finalUrl =
-                `https://www.pixiv.net/en/tags/${encodeURIComponent(query)}`;
-
-        }
-
-
-        /*
-         * X / TWITTER
-         */
-
-        else if (
-            targetUrl.includes(
-                "x.com"
-            )
-        ) {
-
-            finalUrl =
-                `https://x.com/search?q=${encodeURIComponent(query)}`;
-
-        }
-
-
-        /*
-         * CHATGPT
-         */
-
-        else if (
-            targetUrl.includes(
-                "chatgpt.com"
-            )
-        ) {
-
-            /*
-             * ChatGPT does not need a normal ?q=
-             * URL for starting a conversation.
-             *
-             * Using the search-style URL is not guaranteed
-             * to create a prompt, so we simply open ChatGPT.
-             */
-
-            finalUrl =
-                "https://chatgpt.com/";
-
-        }
-
-
-        /*
-         * GEMINI
-         */
-
-        else if (
-            targetUrl.includes(
-                "gemini.google.com"
-            )
-        ) {
-
-            /*
-             * Gemini's web interface does not provide
-             * a universally reliable public URL format
-             * for injecting a prompt.
-             */
-
-            finalUrl =
-                "https://gemini.google.com/";
-
-        }
-
-
-        /*
-         * JANITOR AI
-         */
-
-        else if (
-            targetUrl.includes(
-                "janitorai.com"
-            )
-        ) {
-
-            finalUrl =
-                `https://janitorai.com/search?query=${encodeURIComponent(query)}`;
-
-        }
-
-
-        /*
-         * GENERIC FALLBACK
-         */
-
-        else {
-
-            const separator =
-                targetUrl.includes("?")
-                    ? "&"
-                    : "?";
-
-            finalUrl =
-                `${targetUrl}${separator}q=${encodeURIComponent(query)}`;
-
-        }
-
 
         launchLink(finalUrl);
-
         input.value = "";
-
     }
 
 
     function handleInjectKey(event) {
-
         if (event.key === "Enter") {
             injectSearch();
         }
-
     }
 
 
     /*
      * ============================================================
-     * ICONS
+     * CUSTOM BRAND COLOR & ICON MAPPING (UPDATED AS REQUESTED)
      * ============================================================
      */
 
-    function getSiteIcon(url) {
+    function getSiteBrandInfo(url) {
+        // Core Apps
+        if (url.includes("reddit.com")) return { color: '#FF4500', iconType: 'img', iconVal: 'https://images.seeklogo.com/logo-png/40/1/reddit-logo-png_seeklogo-409489.png' };
+        if (url.includes("x.com")) return { color: '#1DA1F2', iconType: 'img', iconVal: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b7/X_logo.jpg/1280px-X_logo.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail' };
+        if (url.includes("discord.com")) return { color: '#5865F2', iconType: 'img', iconVal: 'https://art.pixilart.com/47700d2e75da.png' };
+        if (url.includes("youtube.com")) return { color: '#FF0000', iconType: 'img', iconVal: 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original' };
+        if (url.includes("google.com")) return { color: '#4285F4', iconType: 'img', iconVal: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFtJYM1s2uYKsmFnAtBhf8u2vZZiX10suQHwipu9TiVw&s=10' };
+        if (url.includes("tiktok.com")) return { color: '#EE1D52', iconType: 'img', iconVal: 'https://cdn.pixabay.com/photo/2021/06/15/12/28/tiktok-6338432_1280.png' };
+        if (url.includes("instagram.com")) return { color: '#E1306C', iconType: 'img', iconVal: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbu_z8wNCMAxpXlGsH4Fj3DJF93Lfz3Dh0ehRa9d_YKAGHyiaJ-uXSU5M&s=10' };
+        if (url.includes("mega.nz")) return { color: '#D9272E', iconType: 'img', iconVal: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvT8Ire2B4qJfE6Pvi6U_xZzABveK3fNLeVOwRK314Xb3TK5LeaOHJpgY&s=10' };
 
-        if (url.includes("reddit.com")) return "👽";
-        if (url.includes("x.com")) return "✖️";
-        if (url.includes("discord.com")) return "💬";
-        if (url.includes("tiktok.com")) return "🎵";
-        if (url.includes("instagram.com")) return "📷";
-        if (url.includes("mega.nz")) return "☁️";
+        // Lesser Used Apps
+        if (url.includes("bsky.app")) return { color: '#0085FF', iconType: 'img', iconVal: 'https://framerusercontent.com/images/WvDCcVDExoPpTkDo6jy7ePIA6YQ.png?width=460&height=460' };
+        if (url.includes("pixiv.net")) return { color: '#049CFF', iconType: 'img', iconVal: 'https://cdn.nwe.io/files/x/0a/39/12fa6b6ef6f2de2c1c6f7cbe749b.jpg' };
+        if (url.includes("threads.com")) return { color: '#4A90E2', iconType: 'img', iconVal: 'https://upload.wikimedia.org/wikipedia/commons/d/db/Threads_%28app%29.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original' };
+        if (url.includes("deviantart.com")) return { color: '#05CC47', iconType: 'img', iconVal: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/e965175b-80a8-4efe-a98c-9b1a5620bb3e/dg5y0nl-089a72e7-b646-4189-8637-423a900a1e9b.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiIvZi9lOTY1MTc1Yi04MGE4LTRlZmUtYTk4Yy05YjFhNTYyMGJiM2UvZGc1eTBubC0wODlhNzJlNy1iNjQ2LTQxODktODYzNy00MjNhOTAwYTFlOWIuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.f03XFi_3wbKXz29Yn1FM8nvszk1mgUtHAJwxqqcVGsA' };
+        if (url.includes("tumblr.com")) return { color: '#36465D', iconType: 'img', iconVal: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Tumblr.svg/330px-Tumblr.svg.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail' };
+        if (url.includes("grok.com")) return { color: '#E7E9EA', iconType: 'img', iconVal: 'https://pbs.twimg.com/media/GkMq1KUbUAAE3U9.png' };
 
-        if (url.includes("bsky.app")) return "🦋";
-        if (url.includes("pixiv.net")) return "🎨";
-        if (url.includes("threads.com")) return "🧵";
-        if (url.includes("deviantart.com")) return "🖼️";
-        if (url.includes("tumblr.com")) return "📝";
-        if (url.includes("grok.com")) return "✨";
+        // AI Chat Bots
+        if (url.includes("chatgpt.com")) return { color: '#10A37F', iconType: 'img', iconVal: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0ywPZuqhTP3RdN4pk1W8TImzwhxdHbDVMxt84ZLBZCHu2uJd8GIHNkm4&s=10' };
+        if (url.includes("gemini.google.com")) return { color: '#8E75B2', iconType: 'img', iconVal: 'https://cdn.jsdelivr.net/npm/@thesvg/icons/icons/google-gemini.svg' };
+        if (url.includes("janitorai.com")) return { color: '#FF69B4', iconType: 'img', iconVal: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUsbZWLSXhfqb4EsPBtB1dA-umAnglu2B1u2I2Vuwpew&s=10' };
+        if (url.includes("spicychat.ai")) return { color: '#A420D0', iconType: 'img', iconVal: 'https://shipthedeal.com/assets/uploads/store/spicychat-coupon-29039.png' };
 
-        if (url.includes("chatgpt.com")) return "🟢";
-        if (url.includes("gemini.google.com")) return "🔵";
-        if (url.includes("janitorai.com")) return "🤖";
+        // Story Websites
+        if (url.includes("archiveofourown.org")) return { color: '#990000', iconType: 'img', iconVal: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRX20rL25M5Sdd5rIENYPsxhPZIgqN5ICwy0rj6H1i_LDNEjN1VDLv0u0k7&s=10' };
+        if (url.includes("hentai-foundry.com")) return { color: '#FFB6C1', iconType: 'img', iconVal: 'https://img.hentai-foundry.com/themes/Dark/images/logo.png' };
+        if (url.includes("fanfiction.net")) return { color: '#2B579A', iconType: 'img', iconVal: 'https://upload.wikimedia.org/wikipedia/en/d/de/FanFiction.net_logo.png?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original' };
 
-        if (url.includes("archiveofourown.org")) return "📖";
-        if (url.includes("hentai-foundry.com")) return "📜";
-        if (url.includes("fanfiction.net")) return "📚";
+        // Random Other Websites (nhentai unique tones of pink)
+        if (url.includes("nhentai.net/category/doujinshi")) return { color: '#FF1493', iconType: 'img', iconVal: 'https://ih1.redbubble.net/image.2802196537.0680/ur,tote_bag_context_medium,product_square,600x600.jpg' };
+        if (url.includes("nhentai.net")) return { color: '#FF69B4', iconType: 'img', iconVal: 'https://pbs.twimg.com/profile_images/1959842006655758336/ZipTzeyh_400x400.jpg' };
+        if (url.includes("nhentai.to")) return { color: '#FF8DA1', iconType: 'img', iconVal: 'https://m.media-amazon.com/images/I/41979CG29kL._AC_UL450_SY450_QL70_.jpg' };
+        if (url.includes("nhentai.xxx")) return { color: '#FFB6C1', iconType: 'img', iconVal: 'https://cdn.vrcmods.com/uploads/items/6715/1761097800/imgs/dbbf00fe95184f09a69f4105e6f91c86.jpg?b=0' };
+        if (url.includes("theporndude.com")) return { color: '#FFB800', iconType: 'img', iconVal: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG0CjADXyDC29FF1tDquggj05DfqC66qsmSi-b9yAF_y3MKwdG1v38QjJE&s=10' };
+        if (url.includes("myhentaicomics.com")) return { color: '#E91E63', iconType: 'img', iconVal: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQibln-PBNxYA3lwcLZ5a8rFJWTHNYccTb4dGDVS-W5H_GrxQ8eVLuVuIpo&s=10' };
+        if (url.includes("myhentaigallery.com")) return { color: '#9C27B0', iconType: 'img', iconVal: 'https://static.vecteezy.com/system/resources/previews/046/532/375/non_2x/a-digital-illustration-of-a-woman-with-long-flowing-red-hair-and-stylized-leaves-the-womans-face-is-shown-in-profile-and-her-hair-is-flowing-behind-her-free-vector.jpg' };
+        if (url.includes("hentaiera.com")) return { color: '#3F51B5', iconType: 'img', iconVal: 'https://static.vecteezy.com/system/resources/thumbnails/041/059/889/small/he-logo-h-e-design-white-he-letter-he-h-e-letter-logo-set-design-initial-letter-ee-linked-circle-uppercase-monogram-logo-h-e-letter-logo-set-design-he-letter-logo-design-pro-vector.jpg' };
+        if (url.includes("doujins.com")) return { color: '#00BCD4', iconType: 'img', iconVal: 'https://doujins.com/img/blog/2208/header.jpg?v=1788262904' };
+        if (url.includes("e-hentai.org")) return { color: '#5C3317', iconType: 'img', iconVal: 'https://storage.moegirl.org.cn/moegirl/commons/8/8d/E-Hentai_LOGO.jpg' };
+        if (url.includes("hitomi.la")) return { color: '#2196F3', iconType: 'img', iconVal: 'https://play-lh.googleusercontent.com/m_ZnqE7gqqcO9HA_sKhG4nbKEh5YtwMeshZoa26zq3Ey0z6UuI_b4wagj2ejcFg-Kx6nEXfGXlmJXZzQaqS_-uc=w480-h960' };
+        if (url.includes("webtoons.com")) return { color: '#00DC64', iconType: 'img', iconVal: 'https://i.pinimg.com/736x/09/28/35/092835edf796d37363489f06afc89016.jpg' };
 
-        if (url.includes("nhentai.net")) return "🐙";
-        if (url.includes("myhentaicomics.com")) return "💬";
-        if (url.includes("myhentaigallery.com")) return "🖼️";
-        if (url.includes("hentaiera.com")) return "🌸";
-        if (url.includes("doujins.com")) return "📖";
-        if (url.includes("e-hentai.org")) return "🐼";
-        if (url.includes("hitomi.la")) return "🎨";
-        if (url.includes("webtoons.com")) return "📱";
+        // Art Sorters (Korra = Avatar 4 elements: Water blue, Earth green, Fire red, Air orange)
+        if (url.includes("kurosearch.com")) return { color: '#0077BE', iconType: 'img', iconVal: 'https://site-images.similarcdn.com/image?url=kurosearch.com&t=4&s=1&h=b28f531cc5ece018bf68aa556d6b125df07455527b39d96b27ad0cd81904d6d3' };
+        if (url.includes("kurozenzen")) return { color: '#9B59B6', iconType: 'img', iconVal: 'https://repository-images.githubusercontent.com/187081926/0d77aa80-82e5-11eb-9e89-9ef3088d147c' }; // Unique unused bright purple/orchid color
+        if (url.includes("r34")) return { color: '#FF7F00', iconType: 'img', iconVal: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyHGK48q3TQaTLw5jfyo57K81uHSIvNeF8v8UZ84OIwg&s=10' };
 
-        if (url.includes("kurosearch.com")) return "🔍";
-        if (url.includes("r34")) return "⚡";
-
-        return "🌐";
-
+        return { color: '#58a6ff', iconType: 'fallback', iconVal: '🌐' };
     }
 
 
     /*
      * ============================================================
-     * RENDER LINKS
+     * RENDER LINKS (FAVORITES LIFTED TO TOP)
      * ============================================================
      */
 
     function renderLinks() {
-
-        const container =
-            document.getElementById("links");
-
+        const container = document.getElementById("links");
         container.innerHTML = "";
 
-
-        /*
-         * FAVORITES
-         */
-
-        const favs =
-            ALL_LINKS.filter(
-                u => favorites.includes(u)
-            );
+        const favs = ALL_LINKS.filter(u => favorites.includes(u));
 
         if (favs.length > 0) {
-
-            const favGroup =
-                document.createElement("div");
-
-            favGroup.className =
-                "category-group";
+            const favGroup = document.createElement("div");
+            favGroup.className = "category-group";
 
             favGroup.innerHTML =
                 `<div class="category-header" style="color:#e3b341;">
@@ -1306,67 +1017,35 @@
                 </div>`;
 
             favs.forEach(u => {
-
                 favGroup.appendChild(
-                    createCard(
-                        u,
-                        ALL_LINKS.indexOf(u) + 1,
-                        "#e3b341"
-                    )
+                    createCard(u, true)
                 );
-
             });
 
             container.appendChild(favGroup);
-
         }
 
-
-        /*
-         * NORMAL CATEGORIES
-         */
-
         CATEGORIES.forEach(cat => {
+            const unselectedLinks = cat.links.filter(u => !favorites.includes(u));
+            if (unselectedLinks.length === 0) return;
 
-            const group =
-                document.createElement("div");
+            const group = document.createElement("div");
+            group.className = "category-group";
 
-            group.className =
-                "category-group";
-
-
-            const header =
-                document.createElement("div");
-
-            header.className =
-                "category-header";
-
-            header.style.color =
-                cat.color;
-
-            header.innerHTML =
-                `${cat.icon} ${cat.name} (${cat.links.length})`;
-
+            const header = document.createElement("div");
+            header.className = "category-header";
+            header.style.color = cat.color;
+            header.innerHTML = `${cat.icon} ${cat.name} (${unselectedLinks.length})`;
             group.appendChild(header);
 
-
-            cat.links.forEach(u => {
-
+            unselectedLinks.forEach(u => {
                 group.appendChild(
-                    createCard(
-                        u,
-                        ALL_LINKS.indexOf(u) + 1,
-                        cat.color
-                    )
+                    createCard(u, false)
                 );
-
             });
 
-
             container.appendChild(group);
-
         });
-
     }
 
 
@@ -1376,146 +1055,67 @@
      * ============================================================
      */
 
-    function createCard(url, num, color) {
+    function createCard(url, isFav) {
+        const card = document.createElement("div");
+        card.className = "link-card" + (isFav ? " favorite" : "");
 
-        const card =
-            document.createElement("div");
+        const brand = getSiteBrandInfo(url);
+        card.style.borderColor = brand.color + "55";
 
-        const isFav =
-            favorites.includes(url);
+        const info = document.createElement("div");
+        info.className = "link-info";
 
-        card.className =
-            "link-card" +
-            (isFav ? " favorite" : "");
+        let iconElement;
+        if (brand.iconType === 'img') {
+            iconElement = document.createElement("img");
+            iconElement.className = "link-icon-img";
+            iconElement.src = brand.iconVal;
+        } else {
+            iconElement = document.createElement("span");
+            iconElement.className = "link-icon-fallback";
+            iconElement.style.backgroundColor = brand.color + "22";
+            iconElement.style.color = brand.color;
+            iconElement.textContent = brand.iconVal;
+        }
 
+        const textContainer = document.createElement("div");
+        textContainer.className = "link-text-container";
 
-        const icon =
-            getSiteIcon(url);
-
-
-        /*
-         * Build DOM safely instead of injecting
-         * the URL directly into onclick HTML.
-         */
-
-        const info =
-            document.createElement("div");
-
-        info.className =
-            "link-info";
-
-
-        const iconElement =
-            document.createElement("span");
-
-        iconElement.className =
-            "link-icon";
-
-        iconElement.style.backgroundColor =
-            color + "22";
-
-        iconElement.style.color =
-            color;
-
-        iconElement.textContent =
-            icon;
-
-
-        const textContainer =
-            document.createElement("div");
-
-        textContainer.className =
-            "link-text-container";
-
-
-        const name =
-            document.createElement("div");
-
-        name.className =
-            "link-name";
-
-        name.style.color =
-            color;
-
-        name.textContent =
-            getCleanName(url);
-
-
-        const number =
-            document.createElement("div");
-
-        number.className =
-            "link-number";
-
-        number.textContent =
-            `Site #${num}`;
-
+        const name = document.createElement("div");
+        name.className = "link-name";
+        name.style.color = brand.color;
+        name.textContent = getCleanName(url);
 
         textContainer.appendChild(name);
-        textContainer.appendChild(number);
-
         info.appendChild(iconElement);
         info.appendChild(textContainer);
 
+        const actions = document.createElement("div");
+        actions.className = "actions";
 
-        /*
-         * ACTIONS
-         */
+        const openButton = document.createElement("button");
+        openButton.className = "btn-action";
+        openButton.textContent = "Open";
 
-        const actions =
-            document.createElement("div");
+        const favoriteButton = document.createElement("button");
+        favoriteButton.className = "favorite-button" + (isFav ? " active" : "");
+        favoriteButton.textContent = "★";
 
-        actions.className =
-            "actions";
-
-
-        const openButton =
-            document.createElement("button");
-
-        openButton.className =
-            "btn-action";
-
-        openButton.textContent =
-            "Open";
-
-
-        const favoriteButton =
-            document.createElement("button");
-
-        favoriteButton.className =
-            "favorite-button" +
-            (isFav ? " active" : "");
-
-        favoriteButton.textContent =
-            "★";
-
-
-        favoriteButton.addEventListener(
-            "click",
-            event => {
-                toggleFavorite(url, event);
-            }
-        );
-
+        favoriteButton.addEventListener("click", event => {
+            toggleFavorite(url, event);
+        });
 
         actions.appendChild(openButton);
         actions.appendChild(favoriteButton);
 
-
         card.appendChild(info);
         card.appendChild(actions);
 
-
-        card.addEventListener(
-            "click",
-            event => {
-                launchLink(url, event);
-            }
-        );
-
+        card.addEventListener("click", event => {
+            launchLink(url, event);
+        });
 
         return card;
-
     }
 
 
@@ -1526,130 +1126,66 @@
      */
 
     function renderHistory() {
-
-        const container =
-            document.getElementById(
-                "historyList"
-            );
-
+        const container = document.getElementById("historyList");
         container.innerHTML = "";
 
-
         if (history.length === 0) {
-
-            container.innerHTML =
-                '<p class="empty">No recent links opened.</p>';
-
+            container.innerHTML = '<p class="empty">No recent links opened.</p>';
             return;
-
         }
 
+        history.forEach((url) => {
+            const card = document.createElement("div");
+            card.className = "link-card";
 
-        history.forEach((url, i) => {
+            const brand = getSiteBrandInfo(url);
+            card.style.borderColor = brand.color + "55";
 
-            const card =
-                document.createElement("div");
+            const info = document.createElement("div");
+            info.className = "link-info";
 
-            card.className =
-                "link-card";
+            let icon;
+            if (brand.iconType === 'img') {
+                icon = document.createElement("img");
+                icon.className = "link-icon-img";
+                icon.src = brand.iconVal;
+            } else {
+                icon = document.createElement("span");
+                icon.className = "link-icon-fallback";
+                icon.style.backgroundColor = brand.color + "22";
+                icon.style.color = brand.color;
+                icon.textContent = brand.iconVal;
+            }
 
+            const text = document.createElement("div");
+            text.className = "link-text-container";
 
-            const info =
-                document.createElement("div");
-
-            info.className =
-                "link-info";
-
-
-            const icon =
-                document.createElement("span");
-
-            icon.className =
-                "link-icon";
-
-            icon.style.backgroundColor =
-                "#58a6ff22";
-
-            icon.style.color =
-                "#58a6ff";
-
-            icon.textContent =
-                getSiteIcon(url);
-
-
-            const text =
-                document.createElement("div");
-
-            text.className =
-                "link-text-container";
-
-
-            const name =
-                document.createElement("div");
-
-            name.className =
-                "link-name";
-
-            name.style.color =
-                "#58a6ff";
-
-            name.textContent =
-                getCleanName(url);
-
-
-            const number =
-                document.createElement("div");
-
-            number.className =
-                "link-number";
-
-            number.textContent =
-                `Recent #${i + 1}`;
-
+            const name = document.createElement("div");
+            name.className = "link-name";
+            name.style.color = brand.color;
+            name.textContent = getCleanName(url);
 
             text.appendChild(name);
-            text.appendChild(number);
-
             info.appendChild(icon);
             info.appendChild(text);
 
+            const actions = document.createElement("div");
+            actions.className = "actions";
 
-            const actions =
-                document.createElement("div");
-
-            actions.className =
-                "actions";
-
-
-            const button =
-                document.createElement("button");
-
-            button.className =
-                "btn-action";
-
-            button.textContent =
-                "Open";
-
+            const button = document.createElement("button");
+            button.className = "btn-action";
+            button.textContent = "Open";
 
             actions.appendChild(button);
-
-
             card.appendChild(info);
             card.appendChild(actions);
 
-
-            card.addEventListener(
-                "click",
-                event => {
-                    launchLink(url, event);
-                }
-            );
-
+            card.addEventListener("click", event => {
+                launchLink(url, event);
+            });
 
             container.appendChild(card);
-
         });
-
     }
 
 
@@ -1660,48 +1196,23 @@
      */
 
     function getCleanName(url) {
-
         try {
-
-            return new URL(url)
-                .hostname
-                .replace(/^www\./, "");
-
+            return new URL(url).hostname.replace(/^www\./, "");
         } catch (e) {
-
             return url;
-
         }
-
     }
 
 
     function updateUI() {
-
-        document.getElementById(
-            "linkCount"
-        ).textContent =
-            `${ALL_LINKS.length} Links`;
-
-
-        document.getElementById(
-            "progress"
-        ).textContent =
-            `Progress: ${currentIndex} / ${ALL_LINKS.length}`;
-
+        document.getElementById("linkCount").textContent = `${ALL_LINKS.length} Links`;
+        document.getElementById("progress").textContent = `Progress: ${currentIndex} / ${ALL_LINKS.length}`;
     }
 
 
     function toggleHistory() {
-
-        document
-            .getElementById("historyDrawer")
-            .classList.toggle("open");
-
-        document
-            .getElementById("overlay")
-            .classList.toggle("open");
-
+        document.getElementById("historyDrawer").classList.toggle("open");
+        document.getElementById("overlay").classList.toggle("open");
     }
 
 </script>
