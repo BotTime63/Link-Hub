@@ -1,2132 +1,2265 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#101410">
-
-<title>Link Hub</title>
-
-<style>
-/* =========================================================
-   LINK HUB
-   Simple iPhone-first launcher
-   ========================================================= */
-
-:root {
-    --bg: #101410;
-    --card: #191d19;
-    --card-hover: #222822;
-    --border: #2b332b;
-    --text: #f1f3f1;
-    --muted: #969d96;
-    --green: #48d369;
-    --green-dark: #1f8f3d;
-    --danger: #ff4f5e;
-    --shadow: rgba(0, 0, 0, 0.35);
-}
-
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
-
-html,
-body {
-    margin: 0;
-    padding: 0;
-    min-height: 100%;
-    background: var(--bg);
-    color: var(--text);
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-}
-
-body {
-    padding-bottom: 30px;
-}
-
-/* =========================================================
-   HEADER
-   ========================================================= */
-
-header {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-
-    padding:
-        calc(env(safe-area-inset-top) + 14px)
-        16px
-        14px;
-
-    background: rgba(16, 20, 16, 0.94);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-
-    border-bottom: 1px solid var(--border);
-}
-
-.header-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-}
-
-.logo-title {
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-}
-
-.link-count {
-    color: var(--muted);
-    font-size: 13px;
-}
-
-/* =========================================================
-   MAIN
-   ========================================================= */
-
-main {
-    width: 100%;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 18px 14px 0;
-}
-
-/* =========================================================
-   FAVORITES
-   ========================================================= */
-
-.section {
-    margin-bottom: 28px;
-}
-
-.section-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    margin: 0 4px 12px;
-
-    font-size: 14px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.7px;
-    color: var(--muted);
-}
-
-.section-title.favorite-title {
-    color: var(--text);
-}
-
-/* =========================================================
-   ICON GRID
-   ========================================================= */
-
-.icon-grid {
-    display: grid;
-
-    /*
-       4 columns on most iPhones.
-       The minmax lets this adapt to larger screens.
-    */
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-
-    gap: 16px 13px;
-}
-
-/* =========================================================
-   APP ICON
-   ========================================================= */
-
-.app-item {
-    position: relative;
-    min-width: 0;
-}
-
-.app-button {
-    position: relative;
-
-    display: block;
-    width: 100%;
-    aspect-ratio: 1 / 1;
-
-    padding: 0;
-
-    border: 0;
-    border-radius: 20%;
-
-    background: var(--card);
-
-    overflow: hidden;
-
-    cursor: pointer;
-
-    box-shadow:
-        0 4px 12px var(--shadow);
-
-    transition:
-        transform 0.12s ease,
-        background 0.12s ease;
-}
-
-.app-button:active {
-    transform: scale(0.91);
-    background: var(--card-hover);
-}
-
-/* The actual site image */
-
-.app-icon {
-    display: block;
-
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-
-    background: var(--card);
-
-    /*
-       Prevent broken/slow image layout
-       from moving the page around.
-    */
-    border: 0;
-}
-
-/* =========================================================
-   FALLBACK ICON
-   ========================================================= */
-
-.icon-fallback {
-    position: absolute;
-    inset: 0;
-
-    display: none;
-
-    align-items: center;
-    justify-content: center;
-
-    font-size: 32px;
-    font-weight: 800;
-
-    color: var(--green);
-
-    background:
-        linear-gradient(
-            145deg,
-            #202620,
-            #151915
-        );
-}
-
-.app-button.image-error .icon-fallback {
-    display: flex;
-}
-
-/* =========================================================
-   HEART BUTTON
-   ========================================================= */
-
-.favorite-button {
-    position: absolute;
-
-    top: -6px;
-    right: -6px;
-
-    z-index: 5;
-
-    width: 31px;
-    height: 31px;
-
-    padding: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border: 2px solid var(--bg);
-    border-radius: 50%;
-
-    background: rgba(20, 23, 20, 0.94);
-
-    color: #ffffff;
-
-    font-size: 15px;
-    line-height: 1;
-
-    cursor: pointer;
-
-    box-shadow: 0 3px 8px rgba(0,0,0,0.35);
-
-    transition:
-        transform 0.12s ease,
-        color 0.12s ease,
-        background 0.12s ease;
-}
-
-.favorite-button:active {
-    transform: scale(0.82);
-}
-
-.favorite-button.active {
-    color: #ff4f67;
-    background: #241518;
-}
-
-/* =========================================================
-   CATEGORY LABEL
-   ========================================================= */
-
-.category-name {
-    margin-top: 7px;
-
-    width: 100%;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-
-    text-align: center;
-
-    font-size: 11px;
-    font-weight: 600;
-
-    color: var(--muted);
-}
-
-/*
-   Set this to display:none if you want a completely
-   text-free iOS launcher.
-*/
-.show-labels .category-name {
-    display: block;
-}
-
-/* =========================================================
-   EMPTY FAVORITES
-   ========================================================= */
-
-.empty-favorites {
-    padding: 18px;
-
-    border: 1px dashed var(--border);
-    border-radius: 16px;
-
-    text-align: center;
-
-    color: var(--muted);
-    font-size: 13px;
-}
-
-/* =========================================================
-   RANDOM BUTTON
-   ========================================================= */
-
-.random-section {
-    margin-top: 8px;
-    margin-bottom: 22px;
-}
-
-.random-button {
-    width: 100%;
-
-    min-height: 58px;
-
-    border: 0;
-    border-radius: 17px;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--green),
-            var(--green-dark)
-        );
-
-    color: #07100a;
-
-    font-size: 17px;
-    font-weight: 900;
-
-    letter-spacing: 0.1px;
-
-    cursor: pointer;
-
-    box-shadow:
-        0 7px 18px rgba(44, 180, 77, 0.22);
-
-    transition:
-        transform 0.12s ease,
-        filter 0.12s ease;
-}
-
-.random-button:active {
-    transform: scale(0.97);
-    filter: brightness(0.9);
-}
-
-/* =========================================================
-   SEARCH
-   ========================================================= */
-
-.search-section {
-    margin-bottom: 28px;
-}
-
-.search-box {
-    display: flex;
-    gap: 8px;
-}
-
-.search-input,
-.search-select,
-.search-go {
-    height: 47px;
-
-    border: 1px solid var(--border);
-    border-radius: 13px;
-
-    background: var(--card);
-    color: var(--text);
-
-    font-size: 14px;
-
-    outline: none;
-}
-
-.search-input {
-    flex: 1;
-    min-width: 0;
-
-    padding: 0 13px;
-}
-
-.search-input::placeholder {
-    color: #777e77;
-}
-
-.search-input:focus,
-.search-select:focus {
-    border-color: var(--green-dark);
-}
-
-.search-select {
-    width: 92px;
-    padding: 0 7px;
-}
-
-.search-go {
-    width: 50px;
-
-    background: var(--green);
-    color: #07100a;
-
-    border-color: var(--green);
-
-    font-weight: 900;
-}
-
-.search-go:active {
-    transform: scale(0.94);
-}
-
-/* =========================================================
-   CATEGORY DIVIDER
-   ========================================================= */
-
-.category-section {
-    margin-bottom: 30px;
-}
-
-/* =========================================================
-   BROWSER MODAL
-   ========================================================= */
-
-.browser-modal {
-    position: fixed;
-    inset: 0;
-
-    z-index: 100;
-
-    display: none;
-    flex-direction: column;
-
-    background: #000;
-}
-
-.browser-modal.open {
-    display: flex;
-}
-
-.browser-header {
-    flex-shrink: 0;
-
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    padding:
-        calc(env(safe-area-inset-top) + 9px)
-        10px
-        9px;
-
-    background: #151815;
-
-    border-bottom: 1px solid #292d29;
-}
-
-.browser-title {
-    flex: 1;
-
-    min-width: 0;
-
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-
-    font-size: 13px;
-    font-weight: 700;
-
-    color: var(--text);
-}
-
-.browser-button {
-    height: 37px;
-
-    padding: 0 12px;
-
-    border: 1px solid #343a34;
-    border-radius: 10px;
-
-    background: #202420;
-    color: var(--text);
-
-    font-size: 12px;
-    font-weight: 700;
-
-    white-space: nowrap;
-}
-
-.browser-button:active {
-    transform: scale(0.94);
-}
-
-.browser-close {
-    background: #2b171a;
-    color: #ff6975;
-}
-
-.browser-frame {
-    flex: 1;
-
-    width: 100%;
-    height: 100%;
-
-    border: 0;
-
-    background: #fff;
-}
-
-/* =========================================================
-   TOAST
-   ========================================================= */
-
-.toast {
-    position: fixed;
-
-    left: 50%;
-    bottom: calc(env(safe-area-inset-bottom) + 20px);
-
-    z-index: 200;
-
-    transform:
-        translate(-50%, 20px);
-
-    padding: 11px 16px;
-
-    border-radius: 13px;
-
-    background: rgba(30, 34, 30, 0.96);
-    border: 1px solid var(--border);
-
-    color: var(--text);
-
-    font-size: 13px;
-    font-weight: 700;
-
-    opacity: 0;
-    pointer-events: none;
-
-    transition:
-        opacity 0.18s ease,
-        transform 0.18s ease;
-}
-
-.toast.show {
-    opacity: 1;
-    transform:
-        translate(-50%, 0);
-}
-
-/* =========================================================
-   SMALLER SCREENS
-   ========================================================= */
-
-@media (max-width: 350px) {
-
-    .icon-grid {
-        gap: 12px 9px;
-    }
-
-    .category-name {
-        font-size: 10px;
-    }
-
-    .favorite-button {
-        width: 28px;
-        height: 28px;
-        font-size: 14px;
-    }
-}
-
-/* =========================================================
-   TABLET / LARGE SCREEN
-   ========================================================= */
-
-@media (min-width: 700px) {
-
-    main {
-        padding-left: 24px;
-        padding-right: 24px;
-    }
-
-    .icon-grid {
-        grid-template-columns:
-            repeat(6, minmax(0, 1fr));
-    }
-}
-
-/* =========================================================
-   TEXT-FREE MODE
-
-   Add class "no-labels" to <body> if you want only
-   square icons with absolutely no names.
-   ========================================================= */
-
-.no-labels .category-name {
-    display: none;
-}
-</style>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#101114">
+
+    <title>Link Hub</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            background: #101114;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at top, #1a1d24 0%, #101114 42%);
+            color: #f2f3f5;
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "SF Pro Display",
+                "SF Pro Text",
+                system-ui,
+                sans-serif;
+            padding:
+                calc(12px + env(safe-area-inset-top))
+                14px
+                calc(28px + env(safe-area-inset-bottom));
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            border: 0;
+            cursor: pointer;
+        }
+
+        /* =========================================================
+           HEADER
+        ========================================================= */
+
+        .header {
+            max-width: 720px;
+            margin: 0 auto 18px;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .title-wrap h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.8px;
+        }
+
+        .subtitle {
+            margin-top: 4px;
+            color: #858b96;
+            font-size: 13px;
+        }
+
+        .yandex-btn {
+            width: 44px;
+            height: 44px;
+            flex: 0 0 44px;
+            border-radius: 14px;
+            background: #1c1f25;
+            color: #fff;
+            font-size: 18px;
+            box-shadow:
+                inset 0 0 0 1px rgba(255,255,255,0.07),
+                0 6px 20px rgba(0,0,0,0.22);
+        }
+
+        .yandex-btn:active {
+            transform: scale(0.94);
+        }
+
+        /* =========================================================
+           RANDOM
+        ========================================================= */
+
+        .random-card {
+            max-width: 720px;
+            margin: 0 auto 14px;
+        }
+
+        .random-btn {
+            width: 100%;
+            min-height: 68px;
+            border-radius: 20px;
+            background: linear-gradient(
+                135deg,
+                #242931,
+                #191c21
+            );
+            color: #fff;
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: -0.2px;
+            box-shadow:
+                inset 0 0 0 1px rgba(255,255,255,0.08),
+                0 10px 30px rgba(0,0,0,0.24);
+        }
+
+        .random-btn:active {
+            transform: scale(0.985);
+        }
+
+        .progress {
+            margin-top: 8px;
+            text-align: center;
+            color: #707681;
+            font-size: 12px;
+        }
+
+        /* =========================================================
+           SEARCH
+        ========================================================= */
+
+        .search-panel {
+            max-width: 720px;
+            margin: 0 auto 20px;
+        }
+
+        .search-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+        }
+
+        .search-input {
+            min-width: 0;
+            height: 48px;
+            padding: 0 15px;
+            border: 0;
+            outline: none;
+            border-radius: 15px;
+            background: #191c21;
+            color: #fff;
+            box-shadow:
+                inset 0 0 0 1px rgba(255,255,255,0.07);
+        }
+
+        .search-input::placeholder {
+            color: #686e79;
+        }
+
+        .go-btn {
+            min-width: 58px;
+            padding: 0 15px;
+            border-radius: 15px;
+            background: #58a6ff;
+            color: #07111c;
+            font-weight: 800;
+        }
+
+        .search-tools {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .search-select {
+            width: 100%;
+            height: 42px;
+            padding: 0 12px;
+            border: 0;
+            border-radius: 13px;
+            outline: none;
+            background: #191c21;
+            color: #dfe2e7;
+        }
+
+        /* =========================================================
+           CONTENT
+        ========================================================= */
+
+        #content {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin: 0 4px 10px;
+            color: #aab0ba;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .section-count {
+            color: #626873;
+            font-weight: 600;
+        }
+
+        /* =========================================================
+           FAVORITES — iOS STYLE APP ICONS
+        ========================================================= */
+
+        .favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .favorite-tile {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            min-width: 0;
+            overflow: hidden;
+            border-radius: 22%;
+            background: #1b1e24;
+            box-shadow:
+                inset 0 0 0 1px rgba(255,255,255,0.08),
+                0 8px 22px rgba(0,0,0,0.28);
+            isolation: isolate;
+        }
+
+        .favorite-tile:active {
+            transform: scale(0.93);
+        }
+
+        .favorite-tile .icon-wrap {
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+        }
+
+        .favorite-tile img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .favorite-remove {
+            position: absolute;
+            z-index: 5;
+            top: 5px;
+            right: 5px;
+            width: 27px;
+            height: 27px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.62);
+            color: #fff;
+            font-size: 14px;
+            line-height: 27px;
+            text-align: center;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .favorite-remove:active {
+            transform: scale(0.85);
+        }
+
+        /* =========================================================
+           NORMAL LINK ROWS
+        ========================================================= */
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .link-card {
+            --brand: #58a6ff;
+
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            min-height: 62px;
+            padding: 9px 10px;
+            border-radius: 17px;
+            background: #181b20;
+            color: #fff;
+            text-align: left;
+            box-shadow:
+                inset 0 0 0 1px rgba(255,255,255,0.055);
+            transition:
+                transform 0.12s ease,
+                background 0.12s ease;
+        }
+
+        .link-card:active {
+            transform: scale(0.985);
+            background: #20242b;
+        }
+
+        .icon-wrap {
+            position: relative;
+            width: 44px;
+            height: 44px;
+            flex: 0 0 44px;
+            overflow: hidden;
+            border-radius: 13px;
+            background: var(--brand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-wrap img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .fallback-icon {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .link-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .link-name {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .link-domain {
+            margin-top: 3px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            color: #6f7580;
+            font-size: 11px;
+        }
+
+        .favorite-btn {
+            width: 42px;
+            height: 42px;
+            flex: 0 0 42px;
+            border-radius: 13px;
+            background: transparent;
+            color: #555b66;
+            font-size: 22px;
+        }
+
+        .favorite-btn.active {
+            color: #ffd84d;
+        }
+
+        .favorite-btn:active {
+            transform: scale(0.82);
+        }
+
+        /* =========================================================
+           BROWSER MODAL
+        ========================================================= */
+
+        .browser {
+            position: fixed;
+            z-index: 1000;
+            inset: 0;
+            display: none;
+            flex-direction: column;
+            background: #0d0f12;
+            padding-top: env(safe-area-inset-top);
+        }
+
+        .browser.open {
+            display: flex;
+        }
+
+        .browser-bar {
+            min-height: 58px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 10px;
+            background: rgba(18,20,24,0.97);
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .browser-btn {
+            height: 42px;
+            padding: 0 13px;
+            border-radius: 13px;
+            background: #20242b;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .browser-btn:active {
+            transform: scale(0.94);
+        }
+
+        .browser-title {
+            min-width: 0;
+            flex: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            color: #8d939e;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .browser-frame-wrap {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+        }
+
+        #browserFrame {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: #fff;
+        }
+
+        .iframe-help {
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            bottom: 14px;
+            z-index: 3;
+            display: none;
+            padding: 12px;
+            border-radius: 15px;
+            background: rgba(20,22,27,0.94);
+            color: #d9dce1;
+            font-size: 12px;
+            line-height: 1.4;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+        }
+
+        .iframe-help button {
+            margin-top: 8px;
+            padding: 9px 13px;
+            border-radius: 11px;
+            background: #58a6ff;
+            color: #08111b;
+            font-weight: 800;
+        }
+
+        /* =========================================================
+           TOAST
+        ========================================================= */
+
+        .toast {
+            position: fixed;
+            z-index: 2000;
+            left: 50%;
+            bottom: calc(24px + env(safe-area-inset-bottom));
+            transform: translate(-50%, 20px);
+            max-width: calc(100vw - 40px);
+            padding: 11px 15px;
+            border-radius: 13px;
+            background: rgba(25,28,34,0.96);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition:
+                opacity 0.18s ease,
+                transform 0.18s ease;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        /* =========================================================
+           EMPTY STATE
+        ========================================================= */
+
+        .empty {
+            padding: 30px 15px;
+            text-align: center;
+            color: #686e79;
+        }
+
+        /* =========================================================
+           DESKTOP
+        ========================================================= */
+
+        @media (min-width: 700px) {
+            body {
+                padding-left: 24px;
+                padding-right: 24px;
+            }
+
+            .favorites-grid {
+                grid-template-columns: repeat(6, minmax(0, 1fr));
+            }
+
+            .search-tools {
+                grid-template-columns: 1fr 180px;
+            }
+        }
+    </style>
 </head>
 
-<body class="show-labels">
+<body>
 
-<!-- =======================================================
-     HEADER
-     ======================================================= -->
+    <!-- =========================================================
+         HEADER
+    ========================================================== -->
 
-<header>
-    <div class="header-row">
+    <header class="header">
+        <div class="header-top">
+            <div class="title-wrap">
+                <h1>Link Hub</h1>
+                <div class="subtitle" id="linkCount">Loading...</div>
+            </div>
 
-        <div class="logo-title">
-            Link Hub
+            <button
+                class="yandex-btn"
+                id="yandexBtn"
+                aria-label="Copy current link for Yandex"
+                title="Yandex"
+            >
+                🔎
+            </button>
         </div>
-
-        <div class="link-count" id="linkCount">
-            0 links
-        </div>
-
-    </div>
-</header>
+    </header>
 
 
-<main>
-
-    <!-- ===================================================
-         FAVORITES
-         =================================================== -->
-
-    <section class="section" id="favoritesSection">
-
-        <div class="section-title favorite-title">
-            <span>⭐ Favorites</span>
-        </div>
-
-        <div id="favoritesContainer">
-            <!-- Filled by JavaScript -->
-        </div>
-
-    </section>
-
-
-    <!-- ===================================================
+    <!-- =========================================================
          RANDOM
-         =================================================== -->
+    ========================================================== -->
 
-    <section class="random-section">
-
-        <button
-            class="random-button"
-            id="randomButton"
-            type="button">
+    <section class="random-card">
+        <button class="random-btn" id="randomBtn">
             🎲 OPEN RANDOM LINK
         </button>
 
+        <div class="progress" id="progressText">
+            Loading random queue...
+        </div>
     </section>
 
 
-    <!-- ===================================================
+    <!-- =========================================================
          SEARCH
-         =================================================== -->
+    ========================================================== -->
 
-    <section class="search-section">
+    <section class="search-panel">
 
-        <div class="search-box">
-
+        <div class="search-row">
             <input
                 id="searchInput"
                 class="search-input"
-                type="search"
-                placeholder="Search or inject..."
+                type="text"
                 autocomplete="off"
-                autocapitalize="off"
-                spellcheck="false">
+                autocapitalize="none"
+                spellcheck="false"
+                placeholder="Search or paste a URL..."
+            >
+
+            <button class="go-btn" id="searchGo">
+                Go
+            </button>
+        </div>
+
+        <div class="search-tools">
 
             <select
-                id="searchSite"
-                class="search-select">
-
-                <option value="reddit">Reddit</option>
-                <option value="x">X</option>
-                <option value="ao3">AO3</option>
-                <option value="pixiv">Pixiv</option>
-                <option value="kurosearch">KuroSearch</option>
-                <option value="janitorai">JanitorAI</option>
-                <option value="spicychat">SpicyChat</option>
-                <option value="youtube">YouTube</option>
-                <option value="google">Google</option>
-
+                id="injectSelect"
+                class="search-select"
+            >
+                <option value="">Quick search...</option>
             </select>
 
+        </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         LINK CONTENT
+    ========================================================== -->
+
+    <main id="content"></main>
+
+
+    <!-- =========================================================
+         IN-APP BROWSER
+    ========================================================== -->
+
+    <div
+        class="browser"
+        id="browser"
+        aria-hidden="true"
+    >
+
+        <div class="browser-bar">
+
             <button
-                id="searchGo"
-                class="search-go"
-                type="button">
-                Go
+                class="browser-btn"
+                id="browserBack"
+            >
+                ← Back
+            </button>
+
+            <div
+                class="browser-title"
+                id="browserTitle"
+            >
+                Link Hub
+            </div>
+
+            <button
+                class="browser-btn"
+                id="browserSafari"
+            >
+                Safari ↗
             </button>
 
         </div>
 
-    </section>
+        <div class="browser-frame-wrap">
 
+            <iframe
+                id="browserFrame"
+                title="Link Hub Browser"
+                referrerpolicy="no-referrer"
+                allow="autoplay; fullscreen; clipboard-read; clipboard-write"
+            ></iframe>
 
-    <!-- ===================================================
-         ALL CATEGORIES
-         =================================================== -->
+            <div
+                class="iframe-help"
+                id="iframeHelp"
+            >
+                This website is blocking Link Hub's built-in browser.
 
-    <div id="categoriesContainer">
-        <!-- Filled by JavaScript -->
-    </div>
+                <br>
 
-</main>
+                <button id="iframeSafari">
+                    Open in Safari ↗
+                </button>
+            </div>
 
-
-<!-- =======================================================
-     IN-APP BROWSER
-     ======================================================= -->
-
-<div
-    class="browser-modal"
-    id="browserModal"
-    aria-hidden="true">
-
-    <div class="browser-header">
-
-        <div
-            class="browser-title"
-            id="browserTitle">
-            Link Hub
         </div>
 
-        <button
-            class="browser-button"
-            id="safariButton"
-            type="button">
-            Safari ↗
-        </button>
-
-        <button
-            class="browser-button browser-close"
-            id="browserClose"
-            type="button">
-            Close
-        </button>
-
     </div>
 
-    <iframe
-        class="browser-frame"
-        id="browserFrame"
-        title="Link Hub Browser"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
-    </iframe>
 
-</div>
+    <!-- =========================================================
+         TOAST
+    ========================================================== -->
 
-
-<!-- =======================================================
-     TOAST
-     ======================================================= -->
-
-<div
-    class="toast"
-    id="toast">
-</div>
+    <div
+        class="toast"
+        id="toast"
+    ></div>
 
 
-<script>
-/* =========================================================
-   LINK HUB JAVASCRIPT
-   ========================================================= */
+    <script>
+        /* =========================================================
+           LINK DATA
+        ========================================================== */
+
+        const CATEGORIES = [
+            {
+                name: "Core Apps",
+                links: [
+                    "https://www.reddit.com/",
+                    "https://x.com/",
+                    "https://discord.com/channels/@me",
+                    "https://www.youtube.com/",
+                    "https://www.google.com/",
+                    "https://www.tiktok.com/en/",
+                    "https://www.instagram.com/?hl=en",
+                    "https://mega.nz/login"
+                ]
+            },
+
+            {
+                name: "Lesser Used Apps",
+                links: [
+                    "https://bsky.app/",
+                    "https://www.pixiv.net/en/",
+                    "https://www.threads.com/?hl=en",
+                    "https://www.deviantart.com/",
+                    "https://www.tumblr.com/",
+                    "https://grok.com/imagine"
+                ]
+            },
+
+            {
+                name: "AI Chat Bots",
+                links: [
+                    "https://chatgpt.com/",
+                    "https://gemini.google.com/",
+                    "https://janitorai.com/",
+                    "https://spicychat.ai/"
+                ]
+            },
+
+            {
+                name: "Story Websites",
+                links: [
+                    "https://archiveofourown.org/",
+                    "https://www.hentai-foundry.com/site/index",
+                    "https://www.fanfiction.net/"
+                ]
+            },
+
+            {
+                name: "Random Other Websites",
+                links: [
+                    "https://nhentai.net/",
+                    "https://nhentai.net/category/doujinshi/?sort=popular-month",
+                    "https://nhentai.to/go",
+                    "https://nhentai.xxx/",
+                    "https://theporndude.com/4201/imhentai",
+                    "https://myhentaicomics.com/",
+                    "https://myhentaigallery.com/",
+                    "https://hentaiera.com/",
+                    "https://doujins.com/",
+                    "https://e-hentai.org/?f_search=language%3Aenglish+impregnation+%22-ai+generated%22&advsearch=1",
+                    "https://hitomi.la/popular/month-all.html",
+                    "https://www.webtoons.com/en/"
+                ]
+            },
+
+            {
+                name: "Art Sorters",
+                links: [
+                    "https://kurosearch.com/",
+                    "https://kurozenzen.github.io/r34-react/#/",
+                    "https://r34.app/"
+                ]
+            }
+        ];
 
 
-/* =========================================================
-   PASTE / EDIT LINKS HERE
-   =========================================================
+        const ALL_LINKS = CATEGORIES.flatMap(category => category.links);
 
-   Each link only needs:
 
-   name  = displayed name
-   url   = website URL
-   icon  = image URL
+        /* =========================================================
+           IMAGE / BRAND DATA
+           
+           These are restored from your older version.
+        ========================================================== */
 
-   category = which section it belongs to
+        const SITE_META = {
 
-   You can add more links by copying one object.
+            "reddit.com": {
+                name: "Reddit",
+                color: "#FF4500",
+                icon: "https://images.seeklogo.com/logo-png/40/1/reddit-logo-png_seeklogo-409489.png"
+            },
 
-   Example:
+            "x.com": {
+                name: "X",
+                color: "#1DA1F2",
+                icon: "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b7/X_logo.jpg/1280px-X_logo.jpg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail"
+            },
 
-   {
-       name: "Example",
-       url: "https://example.com",
-       icon: "https://example.com/logo.png"
-   }
+            "discord.com": {
+                name: "Discord",
+                color: "#5865F2",
+                icon: "https://art.pixilart.com/47700d2e75da.png"
+            },
 
-   ========================================================= */
+            "youtube.com": {
+                name: "YouTube",
+                color: "#FF0000",
+                icon: "https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original"
+            },
 
-const CATEGORIES = [
+            "google.com": {
+                name: "Google",
+                color: "#4285F4",
+                icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFtJYM1s2uYKsmFnAtBhf8u2vZZiX10suQHwipu9TiVw&s=10"
+            },
 
-    {
-        name: "Core Apps",
+            "tiktok.com": {
+                name: "TikTok",
+                color: "#EE1D52",
+                icon: "https://cdn.pixabay.com/photo/2021/06/15/12/28/tiktok-6338432_1280.png"
+            },
 
-        links: [
+            "instagram.com": {
+                name: "Instagram",
+                color: "#E1306C",
+                icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbu_z8wNCMAxpXlGsH4Fj3DJF93Lfz3Dh0ehRa9d_YKAGHyiaJ-uXSU5M&s=10"
+            },
 
+            "mega.nz": {
+                name: "MEGA",
+                color: "#D9272E",
+                icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvT8Ire2B4qJfE6Pvi6U_xZzABveK3fNLeVOwRK314Xb3TK5LeaOHJpgY&s=10"
+            },
+
+            "bsky.app": {
+                name: "Bluesky",
+                color: "#0085FF",
+                icon: "https://framerusercontent.com/images/WvDCcVDExoPpTkDo6jy7ePIA6YQ.png?width=460&height=460"
+            },
+
+            "pixiv.net": {
+                name: "Pixiv",
+                color: "#049CFF",
+                icon: "https://cdn.nwe.io/files/x/0a/39/12fa6b6ef6f2de2c1c6f7cbe749b.jpg"
+            },
+
+            "threads.com": {
+                name: "Threads",
+                color: "#4A90E2",
+                icon: "https://upload.wikimedia.org/wikipedia/commons/d/db/Threads_%28app%29.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original"
+            },
+
+            "deviantart.com": {
+                name: "DeviantArt",
+                color: "#05CC47",
+                icon: "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/e965175b-80a8-4efe-a98c-9b1a5620bb3e/dg5y0nl-089a72e7-b646-4189-8637-423a900a1e9b.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiIvZi9lOTY1MTc1Yi04MGE4LTRlZmUtYTk4Yy05YjFhNTYyMGJiM2UvZGc1eTBubC0wODlhNzJlNy1iNjQ2LTQxODktODYzNy00MjNhOTAwYTFlOWIuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.f03XFi_3wbKXz29Yn1FM8nvszk1mgUtHAJwxqqcVGsA"
+            },
+
+            "tumblr.com": {
+                name: "Tumblr",
+                color: "#36465D",
+                icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Tumblr.svg/330px-Tumblr.svg.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail"
+            },
+
+            "grok.com": {
+                name: "Grok Imagine",
+                color: "#E7E9EA",
+                icon: "https://pbs.twimg.com/media/GkMq1KUbUAAE3U9.png"
+            },
+
+            "chatgpt.com": {
+                name: "ChatGPT",
+                color: "#10A37F",
+                icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0ywPZuqhTP3RdN4pk1W8TImzwhxdHbDVMxt84ZLBZCHu2uJd8GIHNkm4&s=10"
+            },
+
+            "gemini.google.com": {
+                name: "Gemini",
+                color: "#8E75B2",
+                icon: "https://cdn.jsdelivr.net/npm/@thesvg/icons/icons/google-gemini.svg"
+            },
+
+            "janitorai.com": {
+                name: "JanitorAI",
+                color: "#FF69B4",
+                icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUsbZWLSXhfqb4EsPBtB1dA-umAnglu2B1u2I2Vuwpew&s=10"
+            },
+
+            "spicychat.ai": {
+                name: "SpicyChat",
+                color: "#A420D0",
+                icon: "https://shipthedeal.com/assets/uploads/store/spicychat-coupon-29039.png"
+            },
+
+            "archiveofourown.org": {
+                name: "AO3",
+                color: "#990000",
+                icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRX20rL25M5Sdd5rIENYPsxhPZIgqN5ICwy0rj6H1i_LDNEjN1VDLv0u0k7&s=10"
+            },
+
+            "hentai-foundry.com": {
+                name: "Hentai Foundry",
+                color: "#FFB6C1",
+                icon: "https://img.hentai-foundry.com/themes/Dark/images/logo.png"
+            },
+
+            "fanfiction.net": {
+                name: "FanFiction.net",
+                color: "#2B579A",
+                icon: "https://upload.wikimedia.org/wikipedia/en/d/de/FanFiction.net_logo.png?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original"
+            },
+
+            "theporndude.com": {
+                name: "ThePornDude",
+                color: "#FFB800",
+                icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG0CjADXyDC29FF1tDquggj05DfqC66qsmSi-b9yAF_y3MKwdG1v38QjJE&s=10"
+            },
+
+            "myhentaicomics.com": {
+                name: "MyHentaiComics",
+                color: "#E91E63",
+                icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQibln-PBNxYA3lwcLZ5a8rFJWTHNYccTb4dGDVS-W5H_GrxQ8eVLuVuIpo&s=10"
+            },
+
+            "myhentaigallery.com": {
+                name: "MyHentaiGallery",
+                color: "#9C27B0",
+                icon: "https://static.vecteezy.com/system/resources/previews/046/532/375/non_2x/a-digital-illustration-of-a-woman-with-long-flowing-red-hair-and-stylized-leaves-the-womans-face-is-shown-in-profile-and-her-hair-is-flowing-behind-her-free-vector.jpg"
+            },
+
+            "hentaiera.com": {
+                name: "HentaiEra",
+                color: "#3F51B5",
+                icon: "https://static.vecteezy.com/system/resources/thumbnails/041/059/889/small/he-logo-h-e-design-white-he-letter-he-h-e-letter-logo-set-design-initial-letter-ee-linked-circle-uppercase-monogram-logo-h-e-letter-logo-set-design-he-letter-logo-design-pro-vector.jpg"
+            },
+
+            "doujins.com": {
+                name: "Doujins",
+                color: "#00BCD4",
+                icon: "https://doujins.com/img/blog/2208/header.jpg?v=1788262904"
+            },
+
+            "e-hentai.org": {
+                name: "E-Hentai Search",
+                color: "#5C3317",
+                icon: "https://storage.moegirl.org.cn/moegirl/commons/8/8d/E-Hentai_LOGO.jpg"
+            },
+
+            "hitomi.la": {
+                name: "Hitomi",
+                color: "#2196F3",
+                icon: "https://play-lh.googleusercontent.com/m_ZnqE7gqqcO9HA_sKhG4nbKEh5YtwMeshZoa26zq3Ey0z6UuI_b4wagj2ejcFg-Kx6nEXfGXlmJXZzQaqS_-uc=w480-h960"
+            },
+
+            "webtoons.com": {
+                name: "Webtoon",
+                color: "#00DC64",
+                icon: "https://i.pinimg.com/736x/09/28/35/092835edf796d37363489f06afc89016.jpg"
+            },
+
+            "kurosearch.com": {
+                name: "KuroSearch",
+                color: "#0077BE",
+                icon: "https://site-images.similarcdn.com/image?url=kurosearch.com&t=4&s=1&h=b28f531cc5ece018bf68aa556d6b125df07455527b39d96b27ad0cd81904d6d3"
+            },
+
+            "kurozenzen.github.io": {
+                name: "KuroZenzen",
+                color: "#9B59B6",
+                icon: "https://repository-images.githubusercontent.com/187081926/0d77aa80-82e5-11eb-9e89-9ef3088d147c"
+            },
+
+            "r34.app": {
+                name: "Rule34",
+                color: "#FF7F00",
+                icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyHGK48q3TQaTLw5jfyo57K81uHSIvNeF8v8UZ84OIwg&s=10"
+            },
+
+            "nhentai.to": {
+                name: "nHentai.to",
+                color: "#FF8DA1",
+                icon: "https://m.media-amazon.com/images/I/41979CG29kL._AC_UL450_SY450_QL70_.jpg"
+            },
+
+            "nhentai.xxx": {
+                name: "nHentai.xxx",
+                color: "#FFB6C1",
+                icon: "https://cdn.vrcmods.com/uploads/items/6715/1761097800/imgs/dbbf00fe95184f09a69f4105e6f91c86.jpg?b=0"
+            },
+
+            "nhentai.net": {
+                name: "nHentai",
+                color: "#FF69B4",
+                icon: "https://pbs.twimg.com/profile_images/1959842006655758336/ZipTzeyh_400x400.jpg"
+            }
+        };
+
+
+        /* =========================================================
+           SPECIAL ICON / NAME FOR NHENTAI CATEGORY
+        ========================================================== */
+
+        const NHENTAI_CATEGORY_META = {
+            name: "nHentai Popular",
+            color: "#FF1493",
+            icon: "https://ih1.redbubble.net/image.2802196537.0680/ur,tote_bag_context_medium,product_square,600x600.jpg"
+        };
+
+
+        /* =========================================================
+           SEARCH TARGETS
+        ========================================================== */
+
+        const SEARCH_TARGETS = [
             {
                 name: "Reddit",
-                url: "https://www.reddit.com/",
-                icon: "https://www.redditstatic.com/desktop2x/img/favicon/favicon-96x96.png"
+                url: "https://www.reddit.com/search/?q="
             },
-
             {
                 name: "X",
-                url: "https://x.com/",
-                icon: "https://abs.twimg.com/favicons/twitter.3.ico"
+                url: "https://x.com/search?q="
             },
-
-            {
-                name: "Discord",
-                url: "https://discord.com/app",
-                icon: "https://cdn.discordapp.com/icons/613425648685547541/a_1f0e7f2d9c7b4f4b8a0f6f2d7a9b7d7a.png"
-            },
-
-            {
-                name: "YouTube",
-                url: "https://www.youtube.com/",
-                icon: "https://www.youtube.com/s/desktop/fe7e7d39/img/favicon_144x144.png"
-            },
-
-            {
-                name: "Google",
-                url: "https://www.google.com/",
-                icon: "https://www.google.com/favicon.ico"
-            },
-
-            {
-                name: "TikTok",
-                url: "https://www.tiktok.com/",
-                icon: "https://www.tiktok.com/favicon.ico"
-            },
-
-            {
-                name: "Instagram",
-                url: "https://www.instagram.com/",
-                icon: "https://www.instagram.com/favicon.ico"
-            },
-
-            {
-                name: "MEGA",
-                url: "https://mega.nz/",
-                icon: "https://mega.nz/favicon.ico"
-            }
-
-        ]
-    },
-
-
-    {
-        name: "Lesser Used Apps",
-
-        links: [
-
-            {
-                name: "Bluesky",
-                url: "https://bsky.app/",
-                icon: "https://bsky.app/static/favicon-32x32.png"
-            },
-
-            {
-                name: "Pixiv",
-                url: "https://www.pixiv.net/",
-                icon: "https://www.pixiv.net/favicon.ico"
-            },
-
-            {
-                name: "Threads",
-                url: "https://www.threads.net/",
-                icon: "https://www.threads.net/favicon.ico"
-            },
-
-            {
-                name: "DeviantArt",
-                url: "https://www.deviantart.com/",
-                icon: "https://www.deviantart.com/favicon.ico"
-            },
-
-            {
-                name: "Tumblr",
-                url: "https://www.tumblr.com/",
-                icon: "https://assets.tumblr.com/images/favicons/favicon.ico"
-            },
-
-            {
-                name: "Grok Imagine",
-                url: "https://grok.com/imagine",
-                icon: "https://grok.com/favicon.ico"
-            }
-
-        ]
-    },
-
-
-    {
-        name: "AI Chat Bots",
-
-        links: [
-
-            {
-                name: "ChatGPT",
-                url: "https://chatgpt.com/",
-                icon: "https://chatgpt.com/favicon.ico"
-            },
-
-            {
-                name: "Gemini",
-                url: "https://gemini.google.com/",
-                icon: "https://www.gstatic.com/lamda/images/gemini_favicon_1x.png"
-            },
-
-            {
-                name: "JanitorAI",
-                url: "https://janitorai.com/",
-                icon: "https://janitorai.com/favicon.ico"
-            },
-
-            {
-                name: "SpicyChat",
-                url: "https://spicychat.ai/",
-                icon: "https://spicychat.ai/favicon.ico"
-            }
-
-        ]
-    },
-
-
-    {
-        name: "Story Websites",
-
-        links: [
-
             {
                 name: "AO3",
-                url: "https://archiveofourown.org/",
-                icon: "https://archiveofourown.org/favicon.ico"
+                url: "https://archiveofourown.org/works/search?commit=Search&work_search%5Bquery%5D="
             },
-
             {
-                name: "Hentai Foundry",
-                url: "https://www.hentai-foundry.com/",
-                icon: "https://www.hentai-foundry.com/favicon.ico"
+                name: "Pixiv",
+                url: "https://www.pixiv.net/en/tags/"
             },
-
-            {
-                name: "FanFiction.net",
-                url: "https://www.fanfiction.net/",
-                icon: "https://www.fanfiction.net/favicon.ico"
-            }
-
-        ]
-    },
-
-
-    {
-        name: "Random Other Websites",
-
-        links: [
-
-            {
-                name: "nhentai",
-                url: "https://nhentai.net/",
-                icon: "https://nhentai.net/favicon.ico"
-            },
-
-            {
-                name: "nhentai Popular",
-                url: "https://nhentai.net/search/?sort=popular",
-                icon: "https://nhentai.net/favicon.ico"
-            },
-
-            {
-                name: "nhentai.to",
-                url: "https://nhentai.to/",
-                icon: "https://nhentai.to/favicon.ico"
-            },
-
-            {
-                name: "nhentai.xxx",
-                url: "https://nhentai.xxx/",
-                icon: "https://nhentai.xxx/favicon.ico"
-            },
-
-            {
-                name: "ThePornDude",
-                url: "https://theporndude.com/",
-                icon: "https://theporndude.com/favicon.ico"
-            },
-
-            {
-                name: "MyHentaiComics",
-                url: "https://myhentaicomics.com/",
-                icon: "https://myhentaicomics.com/favicon.ico"
-            },
-
-            {
-                name: "MyHentaiGallery",
-                url: "https://myhentaigallery.com/",
-                icon: "https://myhentaigallery.com/favicon.ico"
-            },
-
-            {
-                name: "HentaiEra",
-                url: "https://hentaiera.com/",
-                icon: "https://hentaiera.com/favicon.ico"
-            },
-
-            {
-                name: "Doujins",
-                url: "https://doujins.com/",
-                icon: "https://doujins.com/favicon.ico"
-            },
-
-            {
-                name: "E-Hentai",
-                url: "https://e-hentai.org/",
-                icon: "https://e-hentai.org/favicon.ico"
-            },
-
-            {
-                name: "Hitomi",
-                url: "https://hitomi.la/",
-                icon: "https://hitomi.la/favicon.ico"
-            },
-
-            {
-                name: "Webtoon",
-                url: "https://www.webtoons.com/",
-                icon: "https://www.webtoons.com/favicon.ico"
-            }
-
-        ]
-    },
-
-
-    {
-        name: "Art Sorters",
-
-        links: [
-
             {
                 name: "KuroSearch",
-                url: "https://kurosearch.com/",
-                icon: "https://kurosearch.com/favicon.ico"
+                url: "https://kurosearch.com/search?q="
             },
-
             {
-                name: "KuroZenzen",
-                url: "https://kurozenzen.com/",
-                icon: "https://kurozenzen.com/favicon.ico"
+                name: "JanitorAI",
+                url: "https://janitorai.com/search?query="
             },
-
             {
-                name: "Rule34 App",
-                url: "https://rule34.app/",
-                icon: "https://rule34.app/favicon.ico"
+                name: "SpicyChat",
+                url: "https://spicychat.ai/search?q="
+            },
+            {
+                name: "YouTube",
+                url: "https://www.youtube.com/results?search_query="
+            },
+            {
+                name: "Google",
+                url: "https://www.google.com/search?q="
             }
+        ];
 
-        ]
-    }
 
-];
+        /* =========================================================
+           STORAGE
+        ========================================================== */
 
+        const STORAGE = {
+            favorites: "linkhub_favorites_v2",
+            queue: "linkhub_queue_v2",
+            index: "linkhub_index_v2",
+            lastOpened: "linkhub_last_opened_v2"
+        };
 
-/* =========================================================
-   STORAGE KEYS
-   ========================================================= */
 
-const STORAGE = {
-    favorites: "linkhub_thumb_fav",
-    shuffle: "linkhub_thumb_shuffle",
-    index: "linkhub_thumb_index"
-};
+        let favorites = [];
+        let shuffledQueue = [];
+        let currentIndex = 0;
+        let lastOpenedUrl = "";
+        let toastTimer = null;
 
 
-/* =========================================================
-   GLOBAL DATA
-   ========================================================= */
+        /* =========================================================
+           ELEMENTS
+        ========================================================== */
 
-const ALL_LINKS =
-    CATEGORIES.flatMap(category => category.links);
+        const content = document.getElementById("content");
+        const linkCount = document.getElementById("linkCount");
 
-let favorites = [];
-let shuffledLinks = [];
-let currentIndex = 0;
+        const randomBtn = document.getElementById("randomBtn");
+        const progressText = document.getElementById("progressText");
 
+        const searchInput = document.getElementById("searchInput");
+        const searchGo = document.getElementById("searchGo");
+        const injectSelect = document.getElementById("injectSelect");
 
-/* =========================================================
-   DOM
-   ========================================================= */
+        const yandexBtn = document.getElementById("yandexBtn");
 
-const linkCount =
-    document.getElementById("linkCount");
+        const browser = document.getElementById("browser");
+        const browserFrame = document.getElementById("browserFrame");
+        const browserTitle = document.getElementById("browserTitle");
+        const browserBack = document.getElementById("browserBack");
+        const browserSafari = document.getElementById("browserSafari");
 
-const favoritesContainer =
-    document.getElementById("favoritesContainer");
+        const iframeHelp = document.getElementById("iframeHelp");
+        const iframeSafari = document.getElementById("iframeSafari");
 
-const categoriesContainer =
-    document.getElementById("categoriesContainer");
+        const toast = document.getElementById("toast");
 
-const randomButton =
-    document.getElementById("randomButton");
 
-const searchInput =
-    document.getElementById("searchInput");
+        /* =========================================================
+           INIT
+        ========================================================== */
 
-const searchSite =
-    document.getElementById("searchSite");
+        document.addEventListener("DOMContentLoaded", () => {
 
-const searchGo =
-    document.getElementById("searchGo");
+            loadData();
 
-const browserModal =
-    document.getElementById("browserModal");
+            buildSearchOptions();
 
-const browserFrame =
-    document.getElementById("browserFrame");
+            ensureQueue();
 
-const browserTitle =
-    document.getElementById("browserTitle");
+            render();
 
-const safariButton =
-    document.getElementById("safariButton");
+            updateLinkCount();
 
-const browserClose =
-    document.getElementById("browserClose");
-
-const toast =
-    document.getElementById("toast");
-
-
-/* =========================================================
-   START APP
-   ========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    initialize
-);
-
-
-function initialize() {
-
-    loadFavorites();
-
-    loadShuffle();
-
-    updateLinkCount();
-
-    renderFavorites();
-
-    renderCategories();
-
-}
-
-
-/* =========================================================
-   LINK COUNT
-   ========================================================= */
-
-function updateLinkCount() {
-
-    const count =
-        ALL_LINKS.length;
-
-    linkCount.textContent =
-        `${count} ${count === 1 ? "link" : "links"}`;
-}
-
-
-/* =========================================================
-   FAVORITES
-   ========================================================= */
-
-function loadFavorites() {
-
-    try {
-
-        const saved =
-            localStorage.getItem(
-                STORAGE.favorites
-            );
-
-        if (!saved) {
-            favorites = [];
-            return;
-        }
-
-        const parsed =
-            JSON.parse(saved);
-
-        if (!Array.isArray(parsed)) {
-            favorites = [];
-            return;
-        }
-
-        favorites =
-            parsed.filter(
-                url =>
-                    ALL_LINKS.some(
-                        link => link.url === url
-                    )
-            );
-
-    } catch (error) {
-
-        favorites = [];
-
-    }
-}
-
-
-function saveFavorites() {
-
-    try {
-
-        localStorage.setItem(
-            STORAGE.favorites,
-            JSON.stringify(favorites)
-        );
-
-    } catch (error) {
-
-        console.warn(
-            "Could not save favorites.",
-            error
-        );
-
-    }
-}
-
-
-function isFavorite(url) {
-
-    return favorites.includes(url);
-}
-
-
-function toggleFavorite(url) {
-
-    if (isFavorite(url)) {
-
-        favorites =
-            favorites.filter(
-                item => item !== url
-            );
-
-        showToast("Removed from Favorites");
-
-    } else {
-
-        favorites.push(url);
-
-        showToast("Added to Favorites ❤️");
-
-    }
-
-    saveFavorites();
-
-    renderFavorites();
-
-    /*
-       Re-rendering the categories also updates
-       every heart immediately.
-    */
-    renderCategories();
-
-}
-
-
-/* =========================================================
-   FIND LINK
-   ========================================================= */
-
-function findLinkByUrl(url) {
-
-    return ALL_LINKS.find(
-        link => link.url === url
-    );
-
-}
-
-
-/* =========================================================
-   CREATE APP ICON
-   ========================================================= */
-
-function createAppIcon(link) {
-
-    const item =
-        document.createElement("div");
-
-    item.className =
-        "app-item";
-
-
-    /* ---------------------------------------------
-       Main icon button
-       --------------------------------------------- */
-
-    const button =
-        document.createElement("button");
-
-    button.type = "button";
-
-    button.className =
-        "app-button";
-
-    button.setAttribute(
-        "aria-label",
-        `Open ${link.name}`
-    );
-
-
-    /* ---------------------------------------------
-       Image
-       --------------------------------------------- */
-
-    const image =
-        document.createElement("img");
-
-    image.className =
-        "app-icon";
-
-    image.src =
-        link.icon;
-
-    image.alt =
-        "";
-
-    /*
-       These help the browser load lots of icons
-       without making the page wait for all of them.
-    */
-    image.loading =
-        "lazy";
-
-    image.decoding =
-        "async";
-
-
-    /* ---------------------------------------------
-       Fallback
-       --------------------------------------------- */
-
-    const fallback =
-        document.createElement("div");
-
-    fallback.className =
-        "icon-fallback";
-
-    fallback.textContent =
-        getInitials(link.name);
-
-
-    image.addEventListener(
-        "error",
-        () => {
-
-            button.classList.add(
-                "image-error"
-            );
-
-        },
-        { once: true }
-    );
-
-
-    button.appendChild(image);
-
-    button.appendChild(fallback);
-
-
-    /* ---------------------------------------------
-       Open link
-       --------------------------------------------- */
-
-    button.addEventListener(
-        "click",
-        () => openInBrowser(link)
-    );
-
-
-    /* ---------------------------------------------
-       Heart
-       --------------------------------------------- */
-
-    const heart =
-        document.createElement("button");
-
-    heart.type = "button";
-
-    heart.className =
-        "favorite-button";
-
-    heart.setAttribute(
-        "aria-label",
-        `Favorite ${link.name}`
-    );
-
-    updateHeartButton(
-        heart,
-        link.url
-    );
-
-
-    heart.addEventListener(
-        "click",
-        event => {
-
-            /*
-               Prevent the heart tap from also
-               opening the website.
-            */
-            event.stopPropagation();
-
-            toggleFavorite(link.url);
-
-        }
-    );
-
-
-    /* ---------------------------------------------
-       Label
-       --------------------------------------------- */
-
-    const label =
-        document.createElement("div");
-
-    label.className =
-        "category-name";
-
-    label.textContent =
-        link.name;
-
-
-    item.appendChild(button);
-
-    item.appendChild(heart);
-
-    item.appendChild(label);
-
-
-    return item;
-}
-
-
-/* =========================================================
-   HEART BUTTON STATE
-   ========================================================= */
-
-function updateHeartButton(
-    button,
-    url
-) {
-
-    const active =
-        isFavorite(url);
-
-    button.classList.toggle(
-        "active",
-        active
-    );
-
-    button.textContent =
-        active ? "♥" : "♡";
-
-}
-
-
-/* =========================================================
-   INITIALS FALLBACK
-   ========================================================= */
-
-function getInitials(name) {
-
-    return name
-        .split(/\s+/)
-        .filter(Boolean)
-        .slice(0, 2)
-        .map(
-            word =>
-                word.charAt(0).toUpperCase()
-        )
-        .join("");
-
-}
-
-
-/* =========================================================
-   RENDER FAVORITES
-   ========================================================= */
-
-function renderFavorites() {
-
-    favoritesContainer.innerHTML = "";
-
-
-    if (favorites.length === 0) {
-
-        const empty =
-            document.createElement("div");
-
-        empty.className =
-            "empty-favorites";
-
-        empty.textContent =
-            "Heart an app to pin it here.";
-
-        favoritesContainer.appendChild(
-            empty
-        );
-
-        return;
-    }
-
-
-    const grid =
-        document.createElement("div");
-
-    grid.className =
-        "icon-grid";
-
-
-    favorites.forEach(url => {
-
-        const link =
-            findLinkByUrl(url);
-
-        if (!link) return;
-
-        grid.appendChild(
-            createAppIcon(link)
-        );
-
-    });
-
-
-    favoritesContainer.appendChild(
-        grid
-    );
-}
-
-
-/* =========================================================
-   RENDER CATEGORIES
-   ========================================================= */
-
-function renderCategories() {
-
-    categoriesContainer.innerHTML = "";
-
-
-    CATEGORIES.forEach(category => {
-
-        const section =
-            document.createElement("section");
-
-        section.className =
-            "category-section";
-
-
-        const title =
-            document.createElement("div");
-
-        title.className =
-            "section-title";
-
-        title.textContent =
-            category.name;
-
-
-        const grid =
-            document.createElement("div");
-
-        grid.className =
-            "icon-grid";
-
-
-        category.links.forEach(link => {
-
-            grid.appendChild(
-                createAppIcon(link)
-            );
+            updateProgress();
 
         });
 
 
-        section.appendChild(title);
+        /* =========================================================
+           DATA
+        ========================================================== */
 
-        section.appendChild(grid);
+        function loadData() {
 
-        categoriesContainer.appendChild(
-            section
+            try {
+
+                const savedFavorites =
+                    localStorage.getItem(STORAGE.favorites);
+
+                if (savedFavorites) {
+                    const parsed = JSON.parse(savedFavorites);
+
+                    if (Array.isArray(parsed)) {
+                        favorites = parsed.filter(url =>
+                            ALL_LINKS.includes(url)
+                        );
+                    }
+                }
+
+                const savedQueue =
+                    localStorage.getItem(STORAGE.queue);
+
+                const savedIndex =
+                    localStorage.getItem(STORAGE.index);
+
+                const savedLast =
+                    localStorage.getItem(STORAGE.lastOpened);
+
+                if (savedQueue) {
+
+                    const parsedQueue =
+                        JSON.parse(savedQueue);
+
+                    if (Array.isArray(parsedQueue)) {
+                        shuffledQueue = parsedQueue.filter(url =>
+                            ALL_LINKS.includes(url)
+                        );
+                    }
+                }
+
+                if (savedIndex !== null) {
+                    currentIndex = Number(savedIndex) || 0;
+                }
+
+                if (savedLast) {
+                    lastOpenedUrl = savedLast;
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "Could not load saved Link Hub data:",
+                    error
+                );
+
+            }
+
+            if (!Array.isArray(favorites)) {
+                favorites = [];
+            }
+
+        }
+
+
+        function saveFavorites() {
+
+            localStorage.setItem(
+                STORAGE.favorites,
+                JSON.stringify(favorites)
+            );
+
+        }
+
+
+        function saveQueue() {
+
+            localStorage.setItem(
+                STORAGE.queue,
+                JSON.stringify(shuffledQueue)
+            );
+
+            localStorage.setItem(
+                STORAGE.index,
+                String(currentIndex)
+            );
+
+        }
+
+
+        /* =========================================================
+           SHUFFLE
+        ========================================================== */
+
+        function shuffleArray(array) {
+
+            const result = [...array];
+
+            for (
+                let i = result.length - 1;
+                i > 0;
+                i--
+            ) {
+
+                const j =
+                    Math.floor(Math.random() * (i + 1));
+
+                [result[i], result[j]] =
+                    [result[j], result[i]];
+
+            }
+
+            return result;
+        }
+
+
+        function ensureQueue() {
+
+            const validQueue =
+                shuffledQueue.length === ALL_LINKS.length &&
+                ALL_LINKS.every(url =>
+                    shuffledQueue.includes(url)
+                );
+
+            if (!validQueue) {
+
+                shuffledQueue =
+                    shuffleArray(ALL_LINKS);
+
+                currentIndex = 0;
+
+                saveQueue();
+
+            }
+
+            if (
+                currentIndex < 0 ||
+                currentIndex >= shuffledQueue.length
+            ) {
+
+                currentIndex = 0;
+
+                saveQueue();
+
+            }
+
+        }
+
+
+        function openRandom() {
+
+            ensureQueue();
+
+            const url =
+                shuffledQueue[currentIndex];
+
+            currentIndex++;
+
+            if (
+                currentIndex >=
+                shuffledQueue.length
+            ) {
+
+                shuffledQueue =
+                    shuffleArray(ALL_LINKS);
+
+                currentIndex = 0;
+
+            }
+
+            saveQueue();
+
+            updateProgress();
+
+            openInHub(url);
+
+        }
+
+
+        function updateProgress() {
+
+            if (!shuffledQueue.length) {
+                progressText.textContent =
+                    "Random queue ready";
+                return;
+            }
+
+            const shownIndex =
+                Math.min(
+                    currentIndex + 1,
+                    shuffledQueue.length
+                );
+
+            progressText.textContent =
+                `Random progress: ${shownIndex} / ${shuffledQueue.length}`;
+
+        }
+
+
+        /* =========================================================
+           SITE META
+        ========================================================== */
+
+        function getSiteMeta(url) {
+
+            try {
+
+                const parsed = new URL(url);
+
+                const host =
+                    parsed.hostname
+                        .toLowerCase()
+                        .replace(/^www\./, "");
+
+                const path =
+                    parsed.pathname.toLowerCase();
+
+                /*
+                    IMPORTANT:
+                    Check the special nHentai category BEFORE
+                    the general nhentai.net entry.
+                */
+
+                if (
+                    host === "nhentai.net" &&
+                    path.startsWith("/category/doujinshi")
+                ) {
+
+                    return NHENTAI_CATEGORY_META;
+
+                }
+
+                if (SITE_META[host]) {
+                    return SITE_META[host];
+                }
+
+            } catch (error) {
+                // Fall through to fallback.
+            }
+
+            return {
+                name: getFallbackName(url),
+                color: "#58a6ff",
+                icon: null
+            };
+
+        }
+
+
+        function getFallbackName(url) {
+
+            try {
+
+                const parsed = new URL(url);
+
+                return parsed.hostname
+                    .replace(/^www\./, "");
+
+            } catch (error) {
+
+                return "Website";
+
+            }
+
+        }
+
+
+        function getDomain(url) {
+
+            try {
+
+                return new URL(url)
+                    .hostname
+                    .replace(/^www\./, "");
+
+            } catch (error) {
+
+                return "";
+
+            }
+
+        }
+
+
+        /* =========================================================
+           ICON CREATION
+        ========================================================== */
+
+        function createIcon(url, sizeClass = "") {
+
+            const meta = getSiteMeta(url);
+
+            const wrap =
+                document.createElement("div");
+
+            wrap.className =
+                `icon-wrap ${sizeClass}`;
+
+            wrap.style.setProperty(
+                "--brand",
+                meta.color
+            );
+
+            if (meta.icon) {
+
+                const img =
+                    document.createElement("img");
+
+                img.src = meta.icon;
+
+                img.alt = "";
+
+                img.loading = "lazy";
+
+                img.decoding = "async";
+
+                img.referrerPolicy = "no-referrer";
+
+                const fallback =
+                    document.createElement("div");
+
+                fallback.className =
+                    "fallback-icon";
+
+                fallback.textContent =
+                    getFallbackLetter(meta.name);
+
+                img.addEventListener(
+                    "error",
+                    () => {
+
+                        img.style.display = "none";
+
+                        fallback.style.display =
+                            "flex";
+
+                    },
+                    { once: true }
+                );
+
+                wrap.appendChild(img);
+                wrap.appendChild(fallback);
+
+            } else {
+
+                const fallback =
+                    document.createElement("div");
+
+                fallback.className =
+                    "fallback-icon";
+
+                fallback.style.display =
+                    "flex";
+
+                fallback.textContent =
+                    getFallbackLetter(meta.name);
+
+                wrap.appendChild(fallback);
+
+            }
+
+            return wrap;
+
+        }
+
+
+        function getFallbackLetter(name) {
+
+            if (!name) {
+                return "🌐";
+            }
+
+            return name
+                .trim()
+                .charAt(0)
+                .toUpperCase();
+
+        }
+
+
+        /* =========================================================
+           RENDER
+        ========================================================== */
+
+        function render() {
+
+            content.innerHTML = "";
+
+            renderFavorites();
+
+            CATEGORIES.forEach(category => {
+
+                const section =
+                    document.createElement("section");
+
+                section.className =
+                    "section";
+
+                const title =
+                    document.createElement("div");
+
+                title.className =
+                    "section-title";
+
+                title.innerHTML = `
+                    <span>${escapeHTML(category.name)}</span>
+                    <span class="section-count">
+                        ${category.links.length}
+                    </span>
+                `;
+
+                const links =
+                    document.createElement("div");
+
+                links.className =
+                    "links";
+
+                category.links.forEach(url => {
+
+                    links.appendChild(
+                        createLinkCard(url)
+                    );
+
+                });
+
+                section.appendChild(title);
+                section.appendChild(links);
+
+                content.appendChild(section);
+
+            });
+
+        }
+
+
+        /* =========================================================
+           FAVORITES GRID
+        ========================================================== */
+
+        function renderFavorites() {
+
+            if (!favorites.length) {
+                return;
+            }
+
+            const section =
+                document.createElement("section");
+
+            section.className =
+                "section";
+
+            const title =
+                document.createElement("div");
+
+            title.className =
+                "section-title";
+
+            title.innerHTML = `
+                <span>⭐ Favorites</span>
+                <span class="section-count">
+                    ${favorites.length}
+                </span>
+            `;
+
+            const grid =
+                document.createElement("div");
+
+            grid.className =
+                "favorites-grid";
+
+            favorites.forEach(url => {
+
+                const meta =
+                    getSiteMeta(url);
+
+                const tile =
+                    document.createElement("div");
+
+                tile.className =
+                    "favorite-tile";
+
+                tile.style.setProperty(
+                    "--brand",
+                    meta.color
+                );
+
+                tile.setAttribute(
+                    "role",
+                    "button"
+                );
+
+                tile.setAttribute(
+                    "tabindex",
+                    "0"
+                );
+
+                tile.setAttribute(
+                    "aria-label",
+                    `Open ${meta.name}`
+                );
+
+                tile.title =
+                    meta.name;
+
+                tile.appendChild(
+                    createIcon(url)
+                );
+
+                const remove =
+                    document.createElement("button");
+
+                remove.className =
+                    "favorite-remove";
+
+                remove.textContent =
+                    "♥";
+
+                remove.setAttribute(
+                    "aria-label",
+                    `Remove ${meta.name} from favorites`
+                );
+
+                remove.addEventListener(
+                    "click",
+                    event => {
+
+                        event.stopPropagation();
+
+                        toggleFavorite(
+                            url
+                        );
+
+                    }
+                );
+
+                tile.addEventListener(
+                    "click",
+                    () => {
+                        openInHub(url);
+                    }
+                );
+
+                tile.addEventListener(
+                    "keydown",
+                    event => {
+
+                        if (
+                            event.key === "Enter" ||
+                            event.key === " "
+                        ) {
+
+                            event.preventDefault();
+
+                            openInHub(url);
+
+                        }
+
+                    }
+                );
+
+                tile.appendChild(remove);
+
+                grid.appendChild(tile);
+
+            });
+
+            section.appendChild(title);
+            section.appendChild(grid);
+
+            content.appendChild(section);
+
+        }
+
+
+        /* =========================================================
+           NORMAL LINK CARD
+        ========================================================== */
+
+        function createLinkCard(url) {
+
+            const meta =
+                getSiteMeta(url);
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "link-card";
+
+            card.style.setProperty(
+                "--brand",
+                meta.color
+            );
+
+            const icon =
+                createIcon(url);
+
+            const info =
+                document.createElement("div");
+
+            info.className =
+                "link-info";
+
+            const name =
+                document.createElement("div");
+
+            name.className =
+                "link-name";
+
+            name.textContent =
+                meta.name;
+
+            const domain =
+                document.createElement("div");
+
+            domain.className =
+                "link-domain";
+
+            domain.textContent =
+                getDomain(url);
+
+            info.appendChild(name);
+            info.appendChild(domain);
+
+            const favorite =
+                document.createElement("button");
+
+            favorite.className =
+                "favorite-btn";
+
+            const isFavorite =
+                favorites.includes(url);
+
+            if (isFavorite) {
+                favorite.classList.add("active");
+            }
+
+            favorite.textContent =
+                isFavorite ? "★" : "☆";
+
+            favorite.setAttribute(
+                "aria-label",
+                isFavorite
+                    ? `Remove ${meta.name} from favorites`
+                    : `Add ${meta.name} to favorites`
+            );
+
+            favorite.addEventListener(
+                "click",
+                event => {
+
+                    event.stopPropagation();
+
+                    toggleFavorite(url);
+
+                }
+            );
+
+            card.appendChild(icon);
+            card.appendChild(info);
+            card.appendChild(favorite);
+
+            card.addEventListener(
+                "click",
+                () => {
+                    openInHub(url);
+                }
+            );
+
+            return card;
+
+        }
+
+
+        /* =========================================================
+           FAVORITES
+        ========================================================== */
+
+        function toggleFavorite(url) {
+
+            const index =
+                favorites.indexOf(url);
+
+            if (index >= 0) {
+
+                favorites.splice(index, 1);
+
+                showToast("Removed from favorites");
+
+            } else {
+
+                favorites.push(url);
+
+                showToast("Added to favorites");
+
+            }
+
+            saveFavorites();
+
+            render();
+
+        }
+
+
+        /* =========================================================
+           THE IMPORTANT PART:
+           OPEN INSIDE THE PWA
+        ========================================================== */
+
+        function openInHub(url) {
+
+            if (!url) {
+                return;
+            }
+
+            lastOpenedUrl = url;
+
+            localStorage.setItem(
+                STORAGE.lastOpened,
+                url
+            );
+
+            const meta =
+                getSiteMeta(url);
+
+            browserTitle.textContent =
+                meta.name;
+
+            /*
+                IMPORTANT:
+                We do NOT use window.open(url).
+                We do NOT assign window.location.
+                
+                The URL goes into the iframe instead.
+                This keeps the Link Hub page itself alive.
+            */
+
+            iframeHelp.style.display =
+                "none";
+
+            browserFrame.src = "about:blank";
+
+            /*
+                Small delay prevents some iOS WebKit weirdness
+                when rapidly switching iframe sources.
+            */
+
+            requestAnimationFrame(() => {
+
+                browserFrame.src = url;
+
+            });
+
+            browser.classList.add("open");
+
+            browser.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+            document.body.style.overflow =
+                "hidden";
+
+        }
+
+
+        /* =========================================================
+           CLOSE IN-APP BROWSER
+        ========================================================== */
+
+        function closeBrowser() {
+
+            browser.classList.remove("open");
+
+            browser.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+            document.body.style.overflow =
+                "";
+
+            /*
+                Clear iframe so the external page stops running
+                while the browser is closed.
+            */
+
+            browserFrame.src =
+                "about:blank";
+
+            iframeHelp.style.display =
+                "none";
+
+        }
+
+
+        /* =========================================================
+           SAFARI
+           
+           This is intentionally the ONLY normal way to leave
+           the PWA from a link.
+        ========================================================== */
+
+        function openCurrentInSafari() {
+
+            if (!lastOpenedUrl) {
+                return;
+            }
+
+            /*
+                On iPhone this may hand the URL to the appropriate
+                installed app because iOS controls external links.
+                
+                That's intentional here because the user explicitly
+                pressed "Safari ↗".
+            */
+
+            window.open(
+                lastOpenedUrl,
+                "_blank",
+                "noopener,noreferrer"
+            );
+
+        }
+
+
+        /* =========================================================
+           SEARCH
+        ========================================================== */
+
+        function performGlobalSearch() {
+
+            const query =
+                searchInput.value.trim();
+
+            if (!query) {
+                return;
+            }
+
+            if (looksLikeUrl(query)) {
+
+                let url = query;
+
+                if (
+                    !url.startsWith("http://") &&
+                    !url.startsWith("https://")
+                ) {
+
+                    url =
+                        "https://" + url;
+
+                }
+
+                openInHub(url);
+
+                return;
+            }
+
+            const googleUrl =
+                "https://www.google.com/search?q=" +
+                encodeURIComponent(query);
+
+            openInHub(googleUrl);
+
+        }
+
+
+        function looksLikeUrl(value) {
+
+            return (
+                /^https?:\/\//i.test(value) ||
+                /^www\./i.test(value) ||
+                /^[a-z0-9.-]+\.[a-z]{2,}(\/|$)/i.test(value)
+            );
+
+        }
+
+
+        /* =========================================================
+           SEARCH TARGET DROPDOWN
+        ========================================================== */
+
+        function buildSearchOptions() {
+
+            SEARCH_TARGETS.forEach(target => {
+
+                const option =
+                    document.createElement("option");
+
+                option.value =
+                    target.url;
+
+                option.textContent =
+                    target.name;
+
+                injectSelect.appendChild(
+                    option
+                );
+
+            });
+
+        }
+
+
+        function performQuickSearch() {
+
+            const query =
+                searchInput.value.trim();
+
+            const base =
+                injectSelect.value;
+
+            if (!query || !base) {
+                return;
+            }
+
+            const target =
+                SEARCH_TARGETS.find(
+                    item => item.url === base
+                );
+
+            if (!target) {
+                return;
+            }
+
+            const url =
+                target.url +
+                encodeURIComponent(query);
+
+            openInHub(url);
+
+        }
+
+
+        /* =========================================================
+           YANDEX
+        ========================================================== */
+
+        async function copyForYandex() {
+
+            const url =
+                lastOpenedUrl ||
+                window.location.href;
+
+            try {
+
+                await navigator.clipboard.writeText(
+                    url
+                );
+
+                showToast(
+                    "Link copied for Yandex"
+                );
+
+            } catch (error) {
+
+                showToast(
+                    "Couldn't copy the link"
+                );
+
+            }
+
+        }
+
+
+        /* =========================================================
+           UI
+        ========================================================== */
+
+        function updateLinkCount() {
+
+            linkCount.textContent =
+                `${ALL_LINKS.length} links`;
+
+        }
+
+
+        function showToast(message) {
+
+            toast.textContent =
+                message;
+
+            toast.classList.add("show");
+
+            clearTimeout(toastTimer);
+
+            toastTimer =
+                setTimeout(() => {
+
+                    toast.classList.remove(
+                        "show"
+                    );
+
+                }, 1800);
+
+        }
+
+
+        /* =========================================================
+           HTML ESCAPE
+        ========================================================== */
+
+        function escapeHTML(value) {
+
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+
+        }
+
+
+        /* =========================================================
+           EVENTS
+        ========================================================== */
+
+        randomBtn.addEventListener(
+            "click",
+            openRandom
         );
 
-    });
 
-}
-
-
-/* =========================================================
-   SHUFFLE
-   ========================================================= */
-
-function createShuffle() {
-
-    shuffledLinks =
-        [...ALL_LINKS];
-
-    /*
-       Fisher-Yates shuffle.
-       Fast and unbiased.
-    */
-
-    for (
-        let i = shuffledLinks.length - 1;
-        i > 0;
-        i--
-    ) {
-
-        const j =
-            Math.floor(
-                Math.random() * (i + 1)
-            );
-
-        [
-            shuffledLinks[i],
-            shuffledLinks[j]
-        ] =
-        [
-            shuffledLinks[j],
-            shuffledLinks[i]
-        ];
-
-    }
-
-    currentIndex = 0;
-
-    saveShuffle();
-
-}
+        searchGo.addEventListener(
+            "click",
+            performGlobalSearch
+        );
 
 
-function loadShuffle() {
+        searchInput.addEventListener(
+            "keydown",
+            event => {
 
-    try {
+                if (event.key === "Enter") {
+                    performGlobalSearch();
+                }
 
-        const savedQueue =
-            localStorage.getItem(
-                STORAGE.shuffle
-            );
-
-        const savedIndex =
-            localStorage.getItem(
-                STORAGE.index
-            );
+            }
+        );
 
 
-        if (!savedQueue) {
+        injectSelect.addEventListener(
+            "change",
+            () => {
 
-            createShuffle();
+                if (
+                    searchInput.value.trim() &&
+                    injectSelect.value
+                ) {
 
-            return;
-        }
+                    performQuickSearch();
+
+                }
+
+            }
+        );
 
 
-        const parsed =
-            JSON.parse(savedQueue);
+        yandexBtn.addEventListener(
+            "click",
+            copyForYandex
+        );
 
 
-        if (
-            !Array.isArray(parsed) ||
-            parsed.length !== ALL_LINKS.length
-        ) {
+        browserBack.addEventListener(
+            "click",
+            closeBrowser
+        );
 
-            createShuffle();
 
-            return;
-        }
+        browserSafari.addEventListener(
+            "click",
+            openCurrentInSafari
+        );
+
+
+        iframeSafari.addEventListener(
+            "click",
+            openCurrentInSafari
+        );
 
 
         /*
-           Make sure every stored URL still
-           exists in the current list.
+            Escape is useful when testing on desktop,
+            but harmless on iPhone.
         */
 
-        const valid =
-            parsed.every(
-                url =>
-                    ALL_LINKS.some(
-                        link => link.url === url
-                    )
-            );
+        document.addEventListener(
+            "keydown",
+            event => {
 
+                if (
+                    event.key === "Escape" &&
+                    browser.classList.contains("open")
+                ) {
 
-        if (!valid) {
+                    closeBrowser();
 
-            createShuffle();
+                }
 
-            return;
-        }
-
-
-        shuffledLinks =
-            parsed
-                .map(
-                    url => findLinkByUrl(url)
-                )
-                .filter(Boolean);
-
-
-        currentIndex =
-            Number.isInteger(
-                Number(savedIndex)
-            )
-            ? Number(savedIndex)
-            : 0;
-
-
-        if (
-            currentIndex < 0 ||
-            currentIndex >= shuffledLinks.length
-        ) {
-
-            currentIndex = 0;
-
-        }
-
-    } catch (error) {
-
-        createShuffle();
-
-    }
-
-}
-
-
-function saveShuffle() {
-
-    try {
-
-        localStorage.setItem(
-            STORAGE.shuffle,
-            JSON.stringify(
-                shuffledLinks.map(
-                    link => link.url
-                )
-            )
+            }
         );
 
-        localStorage.setItem(
-            STORAGE.index,
-            String(currentIndex)
-        );
 
-    } catch (error) {
-
-        console.warn(
-            "Could not save shuffle progress.",
-            error
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   RANDOM LINK
-   ========================================================= */
-
-function openRandom() {
-
-    if (ALL_LINKS.length === 0) {
-
-        showToast("No links available.");
-
-        return;
-    }
-
-
-    if (
-        shuffledLinks.length === 0 ||
-        currentIndex >= shuffledLinks.length
-    ) {
-
-        createShuffle();
-
-    }
-
-
-    const link =
-        shuffledLinks[currentIndex];
-
-
-    currentIndex++;
-
-    saveShuffle();
-
-    openInBrowser(link);
-
-}
-
-
-/* =========================================================
-   OPEN LINK
-   ========================================================= */
-
-function openInBrowser(link) {
-
-    if (!link || !link.url) {
-        return;
-    }
-
-    browserTitle.textContent =
-        link.name || "Link Hub";
-
-    browserFrame.src =
-        link.url;
-
-    safariButton.onclick =
-        () => {
-
-            window.open(
-                link.url,
-                "_blank"
-            );
-
-        };
-
-    browserModal.classList.add(
-        "open"
-    );
-
-    browserModal.setAttribute(
-        "aria-hidden",
-        "false"
-    );
-
-}
-
-
-/* =========================================================
-   CLOSE BROWSER
-   ========================================================= */
-
-function closeBrowser() {
-
-    browserModal.classList.remove(
-        "open"
-    );
-
-    browserModal.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-    /*
-       Clearing the iframe stops the website
-       from continuing to use resources after
-       the user closes it.
-    */
-
-    browserFrame.src =
-        "about:blank";
-
-}
-
-
-/* =========================================================
-   SEARCH / INJECT
-   ========================================================= */
-
-function performSearch() {
-
-    const query =
-        searchInput.value.trim();
-
-    const site =
-        searchSite.value;
-
-
-    if (!query) {
-
-        showToast("Enter something to search.");
-
-        searchInput.focus();
-
-        return;
-    }
-
-
-    const encoded =
-        encodeURIComponent(query);
-
-    let url = "";
-
-
-    switch (site) {
-
-        case "reddit":
-
-            url =
-                `https://www.reddit.com/search/?q=${encoded}`;
-
-            break;
-
-
-        case "x":
-
-            url =
-                `https://x.com/search?q=${encoded}`;
-
-            break;
-
-
-        case "ao3":
-
-            url =
-                `https://archiveofourown.org/works/search?work_search%5Bquery%5D=${encoded}`;
-
-            break;
-
-
-        case "pixiv":
-
-            url =
-                `https://www.pixiv.net/tags/${encoded}`;
-
-            break;
-
-
-        case "kurosearch":
-
-            url =
-                `https://kurosearch.com/?q=${encoded}`;
-
-            break;
-
-
-        case "janitorai":
-
-            url =
-                `https://janitorai.com/search?query=${encoded}`;
-
-            break;
-
-
-        case "spicychat":
-
-            url =
-                `https://spicychat.ai/search?q=${encoded}`;
-
-            break;
-
-
-        case "youtube":
-
-            url =
-                `https://www.youtube.com/results?search_query=${encoded}`;
-
-            break;
-
-
-        case "google":
-
-            url =
-                `https://www.google.com/search?q=${encoded}`;
-
-            break;
-
-
-        default:
-
-            url =
-                `https://www.google.com/search?q=${encoded}`;
-
-    }
-
-
-    openInBrowser({
-        name: `${site} search`,
-        url: url
-    });
-
-}
-
-
-/* =========================================================
-   TOAST
-   ========================================================= */
-
-let toastTimer = null;
-
-
-function showToast(message) {
-
-    toast.textContent =
-        message;
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    clearTimeout(
-        toastTimer
-    );
-
-
-    toastTimer =
-        setTimeout(
+        /* =========================================================
+           IFRAME ERROR / LOAD HANDLING
+           
+           There is no perfect way for JavaScript to detect every
+           X-Frame-Options/CSP block, so this is deliberately kept
+           conservative.
+        ========================================================== */
+
+        browserFrame.addEventListener(
+            "load",
             () => {
 
-                toast.classList.remove(
-                    "show"
-                );
+                /*
+                    Some blocked pages still trigger "load",
+                    so we don't automatically show the warning.
+                    The user can use Safari whenever the page
+                    clearly refuses to appear.
+                */
 
-            },
-            1500
+            }
         );
 
-}
-
-
-/* =========================================================
-   EVENTS
-   ========================================================= */
-
-randomButton.addEventListener(
-    "click",
-    openRandom
-);
-
-
-searchGo.addEventListener(
-    "click",
-    performSearch
-);
-
-
-searchInput.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Enter"
-        ) {
-
-            performSearch();
-
-        }
-
-    }
-);
-
-
-browserClose.addEventListener(
-    "click",
-    closeBrowser
-);
-
-
-/*
-   Tapping the dark browser area isn't possible
-   because the iframe fills it, so only Close
-   controls the modal.
-*/
-
-
-/* =========================================================
-   ESCAPE KEY
-   ========================================================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Escape" &&
-            browserModal.classList.contains("open")
-        ) {
-
-            closeBrowser();
-
-        }
-
-    }
-);
-
-</script>
+    </script>
 
 </body>
 </html>
