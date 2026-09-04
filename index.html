@@ -226,12 +226,12 @@ const CATEGORIES = [
     {
         name: "Core Apps",
         links: [
-            "https://www.reddit.com/",
+            "https://old.reddit.com/",
             "https://x.com/",
             "https://discord.com/channels/@me",
-            "https://www.youtube.com/",
+            "https://m.youtube.com/",
             "https://www.google.com/",
-            "https://www.tiktok.com/en/",
+            "https://m.tiktok.com/",
             "https://www.instagram.com/?hl=en",
             "https://mega.nz/login"
         ]
@@ -245,16 +245,17 @@ const CATEGORIES = [
             "https://spicychat.ai/"
         ]
     }
-    // Add remaining categories here if needed
 ];
 
 const SITE_META = {
+    "old.reddit.com": { name: "Reddit", icon: "https://images.seeklogo.com/logo-png/40/1/reddit-logo-png_seeklogo-409489.png", color: "#FF4500" },
     "reddit.com": { name: "Reddit", icon: "https://images.seeklogo.com/logo-png/40/1/reddit-logo-png_seeklogo-409489.png", color: "#FF4500" },
     "x.com": { name: "X", icon: "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b7/X_logo.jpg/1280px-X_logo.jpg", color: "#1DA1F2" },
     "discord.com": { name: "Discord", icon: "https://art.pixilart.com/47700d2e75da.png", color: "#5865F2" },
+    "m.youtube.com": { name: "YouTube", icon: "https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png", color: "#FF0000" },
     "youtube.com": { name: "YouTube", icon: "https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png", color: "#FF0000" },
     "google.com": { name: "Google", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFtJYM1s2uYKsmFnAtBhf8u2vZZiX10suQHwipu9TiVw&s=10", color: "#4285F4" },
-    "tiktok.com": { name: "TikTok", icon: "https://cdn.pixabay.com/photo/2021/06/15/12/28/tiktok-6338432_1280.png", color: "#EE1D52" },
+    "m.tiktok.com": { name: "TikTok", icon: "https://cdn.pixabay.com/photo/2021/06/15/12/28/tiktok-6338432_1280.png", color: "#EE1D52" },
     "instagram.com": { name: "Instagram", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbu_z8wNCMAxpXlGsH4Fj3DJF93Lfz3Dh0ehRa9d_YKAGHyiaJ-uXSU5M&s=10", color: "#E1306C" },
     "mega.nz": { name: "MEGA", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvT8Ire2B4qJfE6Pvi6U_xZzABveK3fNLeVOwRK314Xb3TK5LeaOHJpgY&s=10", color: "#D9272E" },
     "chatgpt.com": { name: "ChatGPT", icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0ywPZuqhTP3RdN4pk1W8TImzwhxdHbDVMxt84ZLBZCHu2uJd8GIHNkm4&s=10", color: "#10A37F" },
@@ -273,8 +274,8 @@ function getDomain(url) {
 
 function getMeta(url) {
     try {
-        const host = new URL(url).hostname.toLowerCase().replace(/^www\./, "");
-        return SITE_META[host] || { name: host, icon: null, color: "#30363d" };
+        const host = new URL(url).hostname.toLowerCase();
+        return SITE_META[host] || SITE_META[host.replace(/^www\./, "")] || { name: host, icon: null, color: "#30363d" };
     } catch {
         return { name: "Link", icon: null, color: "#30363d" };
     }
